@@ -95,8 +95,161 @@ class Solution:
 ```
 
 3. [Contains Duplicate](https://leetcode.com/problems/contains-duplicate/)
+
+> Given an integer array `nums`, return `true` if any value appears **at least twice** in the array, and return `false` if every element is distinct.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [1,2,3,1]
+> 
+> **Output:** true
+> 
+> **Explanation:**
+> 
+> The element 1 occurs at the indices 0 and 3.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [1,2,3,4]
+> 
+> **Output:** false
+> 
+> **Explanation:**
+> 
+> All elements are distinct.
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [1,1,1,3,3,4,3,2,4,2]
+> 
+> **Output:** true
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 105`
+> - `-109 <= nums[i] <= 109`
+
+Check if any element exist in the set.
+
+```python
+class Solution:
+  def containsDuplicate(self, nums: List[int]) -> bool:
+    """
+    O(n), O(n)
+    """
+    
+    s = set()
+    for num in nums:
+      if num in s:
+        return True
+      s.add(num)
+```
+
 4. [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/)
+
+> Given an integer array `nums`, return _an array_ `answer` _such that_ `answer[i]` _is equal to the product of all the elements of_ `nums` _except_ `nums[i]`.
+> 
+> The product of any prefix or suffix of `nums` is **guaranteed** to fit in a **32-bit**integer.
+> 
+> You must write an algorithm that runs in `O(n)` time and without using the division operation.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [1,2,3,4]
+> **Output:** [24,12,8,6]
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [-1,1,0,-3,3]
+> **Output:** [0,0,9,0,0]
+> 
+> **Constraints:**
+> 
+> - `2 <= nums.length <= 105`
+> - `-30 <= nums[i] <= 30`
+> - The product of any prefix or suffix of `nums` is **guaranteed** to fit in a **32-bit** integer.
+> 
+> **Follow up:** Can you solve the problem in `O(1)` extra space complexity? (The output array **does not** count as extra space for space complexity analysis.)
+
+2 pointers, we create left and right product lists.
+
+Instead of dividing the product of all by the number at the index, we can use the product of elements to the left and the product of elements to the right. Multiplying them will give us the desired result.
+
+Instead of using two arrays to store the left and right products, we'll just use one and use 2 pointers to keep track of the products, and update the result array accordingly.
+
+```python
+class Solution:
+  def productExceptSelf(self, nums: List[int]) -> List[int]:
+    """
+    O(n), O(1)
+    """
+    
+    N = len(nums)
+    res = [1] * N
+    
+    prefix = 1
+    for i in range(N):
+      res[i] = prefix
+      prefix *= nums[i]
+    
+    postfix = 1
+    for i in reversed(range(N)):
+      res[i] *= postfix
+      postfix *= nums[i]
+    
+    return res
+```
+
 5. [Maximum Subarray](https://leetcode.com/problems/maximum-subarray/)
+
+> Given an integer array `nums`, find the subarray with the largest sum, and return _its sum_.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [-2,1,-3,4,-1,2,1,-5,4]
+> **Output:** 6
+> **Explanation:** The subarray [4,-1,2,1] has the largest sum 6.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [1]
+> **Output:** 1
+> **Explanation:** The subarray [1] has the largest sum 1.
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [5,4,-1,7,8]
+> **Output:** 23
+> **Explanation:** The subarray [5,4,-1,7,8] has the largest sum 23.
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 105`
+> - `-104 <= nums[i] <= 104`
+> 
+> **Follow up:** If you have figured out the `O(n)` solution, try coding another solution using the **divide and conquer** approach, which is more subtle.
+
+Kadane's algorithm
+
+Any subarray whose sum is positive is worth keeping. Whenever the sum of the array is negative, we know the entire array is not worth keeping, so we'll reset it back to an empty array.
+
+However, we don't actually need to build the subarray, we can just keep a variable `curr_sum` and add the values of each element there. When it becomes negative, we reset it to 0 (an empty array).
+
+```python
+class Solution:
+  def maxSubArray(self, nums: List[int]) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    curr_sum = max_sum = -inf # curr_sum = max_sum != 0 because for nums = [-1], we should return -1
+    for num in nums:
+      curr_sum = max(num, curr_sum + num)
+      max_sum = max(max_sum, curr_sum)
+    
+    return max_sum
+```
+
 6. [Maximum Product Subarray](https://leetcode.com/problems/maximum-product-subarray/)
 7. [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
 8. [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/)
