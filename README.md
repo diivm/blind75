@@ -251,6 +251,67 @@ class Solution:
 ```
 
 6. [Maximum Product Subarray](https://leetcode.com/problems/maximum-product-subarray/)
+
+> Given an integer array `nums`, find a subarray that has the largest product, and return _the product_.
+> 
+> The test cases are generated so that the answer will fit in a **32-bit** integer.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [2,3,-2,4]
+> **Output:** 6
+> **Explanation:** [2,3] has the largest product 6.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [-2,0,-1]
+> **Output:** 0
+> **Explanation:** The result cannot be 2, because [-2,-1] is not a subarray.
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 2 * 104`
+> - `-10 <= nums[i] <= 10`
+> - The product of any subarray of `nums` is **guaranteed** to fit in a **32-bit** integer.
+
+This can be interpreted as a problem of getting the highest combo chain.
+
+The simplest case is when the numbers are all positive numbers, where we only need to keep on multiplying the accumulated result to get a bigger and bigger combo chain.
+
+However, two things can disrupt the combo chain: zeroes and negative numbers.
+1. Zeroes reset the combo chain. We store the high score in a placeholder and restart the combo chain after zero. If we encounter another combo chain higher than the recorded high score, we need to update the result.
+2. Negative numbers flip the result. If we have another negative number further, the 2 flips won't disrupt the combo chain.
+
+We keep track of the `max_so_far`, the accumulated product of positive numbers and the `min_so_far`, to properly handle negative numbers.
+
+`max_so_far` is updated by taking the maximum value among:
+1. Current number.
+  - This value will be picked if the accumulated product has been really bad (even compared to the current number). This can happen when the current number has a preceding zero (e.g. [0,4]) or is preceded by a single negative number (e.g. [-3,5]).
+2. Product of last `max_so_far` and current number. 
+  - This value will be picked if the accumulated product has been steadily increasing (all positive numbers).
+3. Product of last `min_so_far` and current number. 
+  - This value will be picked if the current number is a negative number and the combo chain has been disrupted by a single negative number before (In a sense, this value is like an antidote to an already poisoned combo chain).
+
+`min_so_far` is updated in using the same three numbers except that we are taking minimum among the above three numbers.
+
+```python
+class Solution:
+  def maxProduct(self, nums: List[int]) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    res = -inf
+    max_so_far = min_so_far = 1
+    
+    for num in nums:
+      candidates = [num, num * min_so_far, num * max_so_far]
+      min_so_far, max_so_far = min(candidates), max(candidates)
+      res = max(res, max_so_far)
+      
+    return res
+```
+
 7. [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
 8. [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/)
 9. [3 Sum](https://leetcode.com/problems/3sum/)
