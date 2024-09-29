@@ -313,8 +313,241 @@ class Solution:
 ```
 
 7. [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/)
+
+> Suppose an array of length `n` sorted in ascending order is **rotated** between `1` and `n` times. For example, the array `nums = [0,1,2,4,5,6,7]` might become:
+> 
+> - `[4,5,6,7,0,1,2]` if it was rotated `4` times.
+> - `[0,1,2,4,5,6,7]` if it was rotated `7` times.
+> 
+> Notice that **rotating** an array `[a[0], a[1], a[2], ..., a[n-1]]` 1 time results in the array `[a[n-1], a[0], a[1], a[2], ..., a[n-2]]`.
+> 
+> Given the sorted rotated array `nums` of **unique** elements, return _the minimum element of this array_.
+> 
+> You must write an algorithm that runs in `O(log n) time.`
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [3,4,5,1,2]
+> **Output:** 1
+> **Explanation:** The original array was [1,2,3,4,5] rotated 3 times.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [4,5,6,7,0,1,2]
+> **Output:** 0
+> **Explanation:** The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [11,13,15,17]
+> **Output:** 11
+> **Explanation:** The original array was [11,13,15,17] and it was rotated 4 times. 
+> 
+> **Constraints:**
+> 
+> - `n == nums.length`
+> - `1 <= n <= 5000`
+> - `-5000 <= nums[i] <= 5000`
+> - All the integers of `nums` are **unique**.
+> - `nums` is sorted and rotated between `1` and `n` times.
+
+In a rotated array we have an inflection point, which will be the minimum element:
+- All the points to the left of the inflection point > first element of the array.
+- All the points to the right of the inflection point < first element of the array.
+
+The condition that decides the search direction will be different from a conventional binary search. In a sorted array, we have the property `first element < last element`. Here, we have the following conditions:
+- If `nums[m] > nums[r]`, inflection point is to the right of mid. We also know that mid is greater than at least one number to the right, so we can use `l = m + 1` and never consider mid again.
+```
+[3,4,5,6,7,8,9,1,2]
+
+nums[l] = 3
+nums[m] = 7
+nums[r] = 2
+inflection = 1
+```
+- Else, `nums[m] <= nums[r]`, inflection point is either at or to the left of mid. It is possible for the mid to store a smaller value than at least one index at right, so we don't discard it by doing `r = m - 1`, it might still have the minimum value.
+```
+[8,9,1,2,3,4,5,6,7]
+
+nums[l] = 8
+nums[m] = 3
+nums[r] = 7
+inflection = 1
+```
+
+```python
+class Solution:
+  def findMin(self, nums: List[int]) -> int:
+    """
+    O(logN), O(1)
+    """
+    
+    l, r = 0, len(nums) - 1
+    
+    # early exit: no rotation
+    if nums[l] < nums[r]:
+      return nums[l]
+    
+    while l < r:
+      m = l + (r - l)//2
+      if nums[m] > nums[r]:
+        l = m + 1
+      else:
+        r = m
+    
+    return nums[l]
+```
+
 8. [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/)
+
+> There is an integer array `nums` sorted in ascending order (with **distinct** values).
+> 
+> Prior to being passed to your function, `nums` is **possibly rotated** at an unknown pivot index `k` (`1 <= k < nums.length`) such that the resulting array is `[nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]` (**0-indexed**). For example, `[0,1,2,4,5,6,7]` might be rotated at pivot index `3` and become `[4,5,6,7,0,1,2]`.
+> 
+> Given the array `nums` **after** the possible rotation and an integer `target`, return _the index of_ `target` _if it is in_ `nums`_, or_ `-1` _if it is not in_ `nums`.
+> 
+> You must write an algorithm with `O(log n)` runtime complexity.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [4,5,6,7,0,1,2], target = 0
+> **Output:** 4
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [4,5,6,7,0,1,2], target = 3
+> **Output:** -1
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [1], target = 0
+> **Output:** -1
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 5000`
+> - `-104 <= nums[i] <= 104`
+> - All values of `nums` are **unique**.
+> - `nums` is an ascending array that is possibly rotated.
+> - `-104 <= target <= 104`
+
+Revised binary search: we add some additional condition checks in the normal binary search in order to better narrow down the scope of the search.
+
+If there's no rotation, both left and right subarrays are sorted. If there's rotation, we'll get at most one sorted subarray. 
+
+We compare the target with the sorted subarray to figure out which subarray to retain for the next iteration. It is straightforward to do so, we can simply compare target with the two boundary values.
+
+```python
+class Solution:
+  def search(self, nums: List[int], target: int) -> int:
+    """
+    O(logN), O(1)
+    """
+    
+    l, r = 0, len(nums) - 1
+    
+    # while l < r: # incorrect
+    while l <= r:
+      m = l + (r - l)//2
+      
+      if nums[m] == target:
+        return m
+      # elif nums[m] > nums[l]: # incorrect
+      elif nums[m] >= nums[l]: # left subarray is sorted
+        if nums[l] <= target < nums[m]: # target in left subarray
+          r = m - 1
+        else: # target in right subarray
+          l = m + 1
+      else: # right subarray is sorted
+        if nums[m] < target <= nums[r]: # target in right subarray
+          l = m + 1
+        else: # target in left subarray
+          r = m - 1
+    
+    return -1
+```
+
 9. [3 Sum](https://leetcode.com/problems/3sum/)
+
+> Given an integer array nums, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j`, `i != k`, and `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.
+> 
+> Notice that the solution set must not contain duplicate triplets.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [-1,0,1,2,-1,-4]
+> **Output:** [[-1,-1,2],[-1,0,1]]
+> **Explanation:** 
+> nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.
+> nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.
+> nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0.
+> The distinct triplets are [-1,0,1] and [-1,-1,2].
+> Notice that the order of the output and the order of the triplets does not matter.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [0,1,1]
+> **Output:** []
+> **Explanation:** The only possible triplet does not sum up to 0.
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [0,0,0]
+> **Output:** [[0,0,0]]
+> **Explanation:** The only possible triplet sums up to 0.
+> 
+> **Constraints:**
+> 
+> - `3 <= nums.length <= 3000`
+> - `-105 <= nums[i] <= 105`
+
+Sorting + 2 pointers approach to find all the applicable pairs. 
+
+This is a minimum O(N^2) time problem, so the O(NlogN) additional sort doesn't add to the time complexity.
+
+In the first loop, we keep track of the current element. We mark the left and right pointers to the next and last element respectively. Creating another loop for the left and right pointers, we try to find the triplets where the sum is zero, shifting left and right pointers accordingly to get a zero sum. 
+
+For the current element, there might be multiple left-right pairs where the triplet sum is zero, so we need to account for all of those values.
+
+```python
+class Solution:
+  def threeSum(self, nums: List[int]) -> List[List[int]]:
+    nums.sort()
+    
+    N = len(nums)
+    res = []
+    
+    for i in range(N):
+      # optimization: skip duplicates for the current element
+      if i > 0 and nums[i] == nums[i - 1]:
+        continue
+      
+      l, r = i + 1, N - 1
+      while l < r:
+        three_sum = nums[i] + nums[l] + nums[r]
+        
+        if three_sum < 0: # move towards right to get a bigger sum
+          l += 1
+        elif three_sum > 0: # move towards left to get a smaller sum
+          r -= 1
+        else: # zero sum, capture the result
+          res.append((nums[i], nums[l], nums[r]))
+          
+          # to check if we can have another left-right pair to get a zero sum, shift the pointers for the next iteration
+          l += 1
+          r -= 1
+          
+          # optimization: skip duplicates for the left element
+          while l < r and nums[l] == nums[l - 1]:
+            l += 1
+          
+          # optimization: skip duplicates for the right element
+          while l < r and nums[r] == nums[r + 1]:
+            r -= 1
+    
+    return res
+```
+
 10. [Container With Most Water](https://leetcode.com/problems/container-with-most-water/)
 
 ---
