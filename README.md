@@ -512,6 +512,10 @@ For the current element, there might be multiple left-right pairs where the trip
 ```python
 class Solution:
   def threeSum(self, nums: List[int]) -> List[List[int]]:
+    """
+    O(N^2), O(N)
+    """
+    
     nums.sort()
     
     N = len(nums)
@@ -550,20 +554,190 @@ class Solution:
 
 No sort approach
 
-We can put a combination of the 3 values in a hashset to avoid duplicates. Values in the combination should be ordered, otherwise we can have results with the same values in different positions.
+We can put a combination of the 3 values in a set to avoid duplicates. Values in the combination should be ordered, otherwise we can have results with the same values in different positions.
+
+The `seen` set is used to keep track of numbers we’ve encountered in the inner loop. This helps to efficiently check if the calculated `third` number exists.
 
 ```python
-def 
+class Solution:
+  def threeSum(self, nums: List[int]) -> List[List[int]]:
+    """
+    O(N^2), O(N)
+    """
+    
+    res = set()
+    dups = set() # optimization: avoid duplicates in outerloop
+    
+    for i, first in enumerate(nums):
+      if first not in dups:
+        dups.add(first)
+        seen = set() # track of numbers in innerloop
+        
+        for second in nums[i+1:]:
+          third = -(first + second) # zero sum
+          if third in seen:
+            # To form a valid triplet, third must be a number that has already been encountered while iterating through the nums array.
+            res.add(tuple(sorted((first, second, third))))
+            seen.add(second)
+    
+    return res
 ```
 
 10. [Container With Most Water](https://leetcode.com/problems/container-with-most-water/)
+
+> You are given an integer array `height` of length `n`. There are `n` vertical lines drawn such that the two endpoints of the `ith` line are `(i, 0)` and `(i, height[i])`.
+> 
+> Find two lines that together with the x-axis form a container, such that the container contains the most water.
+> 
+> Return _the maximum amount of water a container can store_.
+> 
+> **Notice** that you may not slant the container.
+> 
+> **Example 1:**
+> 
+> ![](https://s3-lc-upload.s3.amazonaws.com/uploads/2018/07/17/question_11.jpg)
+> 
+> **Input:** height = [1,8,6,2,5,4,8,3,7]
+> **Output:** 49
+> **Explanation:** The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. In this case, the max area of water (blue section) the container can contain is 49.
+> 
+> **Example 2:**
+> 
+> **Input:** height = [1,1]
+> **Output:** 1
+> 
+> **Constraints:**
+> 
+> - `n == height.length`
+> - `2 <= n <= 105`
+> - `0 <= height[i] <= 104`
+
+2 pointers
+
+`area = width * height`, so we need to maximise both to get the largest area.
+
+The area formed between the lines will always be limited by the height of the shorter line.
+
+We start with the exterior most lines (max width), and gradually reduce to optimise for greatest width. By doing this, we won't gain any increase in area from the width, but we might overcome the reduction by the possible increase in height.
+
+```python
+class Solution:
+  def maxArea(self, height: List[int]) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    l, r = 0, len(height) - 1
+    max_area = 0
+    
+    while l < r:
+      max_area = max(max_area, (r - l) * min(height[l], height[r]))
+      
+      if height[l] < height[r]:
+        l += 1
+      else:  
+        r -= 1
+    
+    return res
+```
 
 ---
 
 ## Binary
 
 11. [Sum of Two Integers](https://leetcode.com/problems/sum-of-two-integers/)
+
+> Given an unsorted array of integers `nums`, return _the length of the longest consecutive elements sequence._
+> 
+> You must write an algorithm that runs in `O(n)` time.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [100,4,200,1,3,2]
+> **Output:** 4
+> **Explanation:** The longest consecutive elements sequence is `[1, 2, 3, 4]`. Therefore its length is 4.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [0,3,7,2,5,8,4,6,0,1]
+> **Output:** 9
+> 
+> **Constraints:**
+> 
+> - `0 <= nums.length <= 105`
+> - `-109 <= nums[i] <= 109`
+
+```python
+class Solution:
+  def longestConsecutive(self, nums: List[int]) -> int:
+    """
+    O(N), O(N)
+    """
+    
+    nums_set = set(nums) # convert to set for O(1) time lookups
+    max_len = 0
+    
+    for num in nums_set:
+      # if this num is the start of a new sequence (i.e. its predecessor is not in the list), initiate new count for this sequence
+      if (num - 1) not in nums_set:
+        count = 1
+        
+        # incrementally check for consecutive integers, increasing the count
+        while (num + 1) in nums_set:
+          num += 1
+          count += 1
+        
+        max_len = max(max_len, count)
+    
+    return max_len
+```
+
 12. [Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits/)
+
+> Given two integers `a` and `b`, return _the sum of the two integers without using the operators_ `+` _and_ `-`.
+> 
+> **Example 1:**
+> 
+> **Input:** a = 1, b = 2
+> **Output:** 3
+> 
+> **Example 2:**
+> 
+> **Input:** a = 2, b = 3
+> **Output:** 5
+> 
+> **Constraints:**
+> 
+> - `-1000 <= a, b <= 1000`
+
+Since Python integers can be arbitrarily large, the function simulates a 32-bit integer environment to handle overflow conditions.
+
+`a ^ b` computes the sum of `a` and `b` without considering the carry.
+
+`(a & b) << 1` computes the carry. `a & b` generates the carry, and the left shift moves the carry to the left (to the next higher bit).
+
+Both results are masked with `& MASK` to ensure they fit within 32 bits.
+
+If `a` is less than `MAX_INT`, it is within the valid range for a signed 32-bit integer and can be returned directly.
+
+If `a` is greater than `MAX_INT`, it indicates an overflow (i.e., the result should be negative in 32-bit representation). The expression `~(a ^ MASK)` converts it back to the negative representation by flipping the bits (two's complement).
+
+```python
+class Solution:
+    def getSum(self, a: int, b: int) -> int:
+      MASK = 0xFFFFFFFF  # 32 1-bits, used to limit results to 32 bits
+      MAX_INT = 0x7FFFFFFF  # 31 1-bits, represents the maximum positive value for a signed 32-bit integer
+
+      while b:
+        # Calculate the sum without carrying
+        a, b = (a ^ b) & MASK, ((a & b) << 1) & MASK
+        # a becomes the sum of a and b without considering carry
+        # b becomes the carry that needs to be added in the next iteration
+      
+      # If a is greater than MAX_INT, it means we have a negative result in 32-bit representation
+      return a if a < MAX_INT else ~(a ^ MASK)
+```
+
 13. [Counting Bits](https://leetcode.com/problems/counting-bits/)
 14. [Missing Number](https://leetcode.com/problems/missing-number/)
 15. [Reverse Bits](https://leetcode.com/problems/reverse-bits/)
