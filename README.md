@@ -548,6 +548,14 @@ class Solution:
     return res
 ```
 
+No sort approach
+
+We can put a combination of the 3 values in a hashset to avoid duplicates. Values in the combination should be ordered, otherwise we can have results with the same values in different positions.
+
+```python
+def 
+```
+
 10. [Container With Most Water](https://leetcode.com/problems/container-with-most-water/)
 
 ---
