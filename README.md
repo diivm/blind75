@@ -641,11 +641,7 @@ class Solution:
     return res
 ```
 
----
-
-## Binary
-
-11. [Sum of Two Integers](https://leetcode.com/problems/sum-of-two-integers/)
+11. [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/)
 
 > Given an unsorted array of integers `nums`, return _the length of the longest consecutive elements sequence._
 > 
@@ -692,7 +688,11 @@ class Solution:
     return max_len
 ```
 
-12. [Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits/)
+---
+
+## Binary
+
+12. [Sum of Two Integers](https://leetcode.com/problems/sum-of-two-integers/)
 
 > Given two integers `a` and `b`, return _the sum of the two integers without using the operators_ `+` _and_ `-`.
 > 
@@ -725,6 +725,10 @@ If `a` is greater than `MAX_INT`, it indicates an overflow (i.e., the result 
 ```python
 class Solution:
     def getSum(self, a: int, b: int) -> int:
+      """
+      O()
+      """
+      
       MASK = 0xFFFFFFFF  # 32 1-bits, used to limit results to 32 bits
       MAX_INT = 0x7FFFFFFF  # 31 1-bits, represents the maximum positive value for a signed 32-bit integer
 
@@ -738,35 +742,97 @@ class Solution:
       return a if a < MAX_INT else ~(a ^ MASK)
 ```
 
-13. [Counting Bits](https://leetcode.com/problems/counting-bits/)
-14. [Missing Number](https://leetcode.com/problems/missing-number/)
-15. [Reverse Bits](https://leetcode.com/problems/reverse-bits/)
+13. [Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits/)
+
+> Write a function that takes the binary representation of a positive integer and returns the number of 
+> 
+> set bits
+> 
+>  it has (also known as the [Hamming weight](http://en.wikipedia.org/wiki/Hamming_weight)).
+> 
+> **Example 1:**
+> 
+> **Input:** n = 11
+> 
+> **Output:** 3
+> 
+> **Explanation:**
+> 
+> The input binary string **1011** has a total of three set bits.
+> 
+> **Example 2:**
+> 
+> **Input:** n = 128
+> 
+> **Output:** 1
+> 
+> **Explanation:**
+> 
+> The input binary string **10000000** has a total of one set bit.
+> 
+> **Example 3:**
+> 
+> **Input:** n = 2147483645
+> 
+> **Output:** 30
+> 
+> **Explanation:**
+> 
+> The input binary string **1111111111111111111111111111101** has a total of thirty set bits.
+> 
+> **Constraints:**
+> 
+> - `1 <= n <= 231 - 1`
+> 
+> **Follow up:** If this function is called many times, how would you optimize it?
+
+Instead of checking every bit of the number, we repeatedly flip the least-significant 1-bit of the number to 0, and add 1 to the result. As soon as the number becomes 0, we know that it does not have any more 1-bits, and we return the sum.
+
+For any number n, doing a bit-wise AND of n and n-1 flips the least-significant 1-bit in n to 0.
+
+```python
+class Solution:
+  def hammingWeight(self, n: int) -> int:
+    """
+    O(1), O(1)
+    """
+    
+    bits = 0
+    while n:
+      bits += 1
+      n &= n - 1
+    
+    return bits
+```
+
+14. [Counting Bits](https://leetcode.com/problems/counting-bits/)
+15. [Missing Number](https://leetcode.com/problems/missing-number/)
+16. [Reverse Bits](https://leetcode.com/problems/reverse-bits/)
 
 ---
 
 ## Dynamic Programming
 
-16. [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/)
-17. [Coin Change](https://leetcode.com/problems/coin-change/)
-18. [Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/)
-19. [Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
-20. [Word Break Problem](https://leetcode.com/problems/word-break/)
-21. [Combination Sum](https://leetcode.com/problems/combination-sum-iv/)
-22. [House Robber](https://leetcode.com/problems/house-robber/)
-23. [House Robber II](https://leetcode.com/problems/house-robber-ii/)
-24. [Decode Ways](https://leetcode.com/problems/decode-ways/)
-25. [Unique Paths](https://leetcode.com/problems/unique-paths/)
-26. [Jump Game](https://leetcode.com/problems/jump-game/)
+17. [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/)
+18. [Coin Change](https://leetcode.com/problems/coin-change/)
+19. [Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/)
+20. [Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
+21. [Word Break Problem](https://leetcode.com/problems/word-break/)
+22. [Combination Sum](https://leetcode.com/problems/combination-sum-iv/)
+23. [House Robber](https://leetcode.com/problems/house-robber/)
+24. [House Robber II](https://leetcode.com/problems/house-robber-ii/)
+25. [Decode Ways](https://leetcode.com/problems/decode-ways/)
+26. [Unique Paths](https://leetcode.com/problems/unique-paths/)
+27. [Jump Game](https://leetcode.com/problems/jump-game/)
 
 ---
 
 ## Graph
 
-27. [Clone Graph](https://leetcode.com/problems/clone-graph/)
-28. [Course Schedule](https://leetcode.com/problems/course-schedule/)
-29. [Pacific Atlantic Water Flow](https://leetcode.com/problems/pacific-atlantic-water-flow/)
-30. [Number of Islands](https://leetcode.com/problems/number-of-islands/)
-31. [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/)
+28. [Clone Graph](https://leetcode.com/problems/clone-graph/)
+29. [Course Schedule](https://leetcode.com/problems/course-schedule/)
+30. [Pacific Atlantic Water Flow](https://leetcode.com/problems/pacific-atlantic-water-flow/)
+31. [Number of Islands](https://leetcode.com/problems/number-of-islands/)
 32. [Alien Dictionary](https://leetcode.com/problems/alien-dictionary/)
 33. [Graph Valid Tree](https://leetcode.com/problems/graph-valid-tree/)
 34. [Number of Connected Components in an Undirected Graph](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/)
