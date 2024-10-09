@@ -806,16 +806,593 @@ class Solution:
 ```
 
 14. [Counting Bits](https://leetcode.com/problems/counting-bits/)
+
+> Given an integer `n`, return _an array_ `ans` _of length_ `n + 1` _such that for each_ `i` (`0 <= i <= n`)_,_ `ans[i]` _is the **number of**_ `1`_**'s** in the binary representation of_ `i`.
+> 
+> **Example 1:**
+> 
+> **Input:** n = 2
+> **Output:** [0,1,1]
+> **Explanation:**
+> 0 --> 0
+> 1 --> 1
+> 2 --> 10
+> 
+> **Example 2:**
+> 
+> **Input:** n = 5
+> **Output:** [0,1,1,2,1,2]
+> **Explanation:**
+> 0 --> 0
+> 1 --> 1
+> 2 --> 10
+> 3 --> 11
+> 4 --> 100
+> 5 --> 101
+> 
+> **Constraints:**
+> 
+> - `0 <= n <= 105`
+> 
+> **Follow up:**
+> 
+> - It is very easy to come up with a solution with a runtime of `O(n log n)`. Can you do it in linear time `O(n)` and possibly in a single pass?
+> - Can you do it without using any built-in function (i.e., like `__builtin_popcount`in C++)?
+
+DP + Last bit set (rightmost set bit)
+
+We set the rightmost 1-bit to zero using the bit trick `x & (x-1)`, and add 1 (the count of the marked bit) to the the resultant integer's count from the previous iterations.
+
+Transition function: `P(x) = P(x & (x−1)) + 1`
+
+```
+x          x & (x-1)    No. of bits
+
+0 (0)      _            0 (base case)
+1 (1)      0 (0)        bits[0] + 1 = 0 + 1 = 1
+2 (10)     0 (0)        bits[0] + 1 = 0 + 1 = 1
+3 (11)     2 (10)       bits[2] + 1 = 1 + 1 = 2
+4 (100)    0 (0)        bits[0] + 1 = 0 + 1 = 1
+5 (101)    4 (100)      bits[4] + 1 = 1 + 1 = 2
+6 (110)    4 (100)      bits[4] + 1 = 1 + 1 = 2
+7 (111)    6 (110)      bits[6] + 1 = 2 + 1 = 3
+8 (1000)   0 (0)        bits[0] + 1 = 0 + 1 = 1
+```
+
+```python
+class Solution:
+  def countBits(self, n: int) -> List[int]:
+    """
+    O(N), O(1)
+    """
+    
+    dp = [0] * (n + 1)
+    for num in range(1, n + 1):
+      dp[num] = dp[num & (num-1)] + 1
+    
+    return dp
+```
+
+Similar solutions can be made by manipulating other bits.
+
+Ex. DP + Least Significant Bit
+
+Shift right by 1, use the resultant integer's count, and add 1 if the least significant bit (lost in the shift) was 1.
+
+`P(x) = P(x >> 1) + (x & 1)`
+
+```python
+class Solution:
+  def countBits(self, n: int) -> List[int]:
+    """
+    O(N), O(1)
+    """
+    
+    dp = [0] * (n + 1)
+    for num in range(1, n + 1):
+      dp[num] = dp[num >> 1] + (num & 1)
+    
+    return dp
+```
+
 15. [Missing Number](https://leetcode.com/problems/missing-number/)
+
+> Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return _the only number in the range that is missing from the array._
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [3,0,1]
+> **Output:** 2
+> **Explanation:** n = 3 since there are 3 numbers, so all numbers are in the range [0,3]. 2 is the missing number in the range since it does not appear in nums.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [0,1]
+> **Output:** 2
+> **Explanation:** n = 2 since there are 2 numbers, so all numbers are in the range [0,2]. 2 is the missing number in the range since it does not appear in nums.
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [9,6,4,2,3,5,7,0,1]
+> **Output:** 8
+> **Explanation:** n = 9 since there are 9 numbers, so all numbers are in the range [0,9]. 8 is the missing number in the range since it does not appear in nums.
+> 
+> **Constraints:**
+> 
+> - `n == nums.length`
+> - `1 <= n <= 104`
+> - `0 <= nums[i] <= n`
+> - All the numbers of `nums` are **unique**.
+> 
+> **Follow up:** Could you implement a solution using only `O(1)` extra space complexity and `O(n)` runtime complexity?
+
+XOR operations
+
+We can take XOR of the given numbers, and then XOR of the range to get our missing number. We'll be XORing each number by itself (result 0) except the missing one.
+
+```
+input = [3, 5, 2, 1, 0]
+
+XOR(input) ^ XOR(range)
+
+= (3 ^ 5 ^ 2 ^ 1 ^ 0) ^ (0 ^ 1 ^ 2 ^ 3 ^ 4 ^ 5)
+
+= (0 ^ 0) ^ (1 ^ 1) ^ (2 ^ 2) ^ (3 ^ 3) ^ (4) ^ (5 ^ 5)
+
+= 0 ^ 0 ^ 0 ^ 0 ^ 4 ^ 0
+
+= 4
+```
+
+```python
+class Solution:
+  def missingNumber(self, nums: List[int]) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    n = len(nums)
+    missing = 0
+    
+    for i in range(n + 1): # 0 .. n
+      missing ^= i # XOR by range
+      if i < n:
+        missing ^= nums[i] # XOR by input
+    
+    return missing
+```
+
+Because we know that input contains n numbers and that it is missing exactly one number on the range [0..n-1], we know that n definitely replaces the missing number in input. Therefore, if we initialise an integer to n and XOR it with every index and value, we will be left with the missing number.
+
+```python
+class Solution:
+  def missingNumber(self, nums: List[int]) -> int:
+    """
+    alternate solution
+    
+    O(N), O(1)
+    """
+    
+    x = len(nums)
+    for i, num in enumerate(nums):
+      x ^= i ^ num
+    
+    return x
+```
+
+Side note: Expected sum calculated via Gauss formula `n * (n + 1) / 2`  subtracted by the actual sum of the range will also give a valid answer.
+
 16. [Reverse Bits](https://leetcode.com/problems/reverse-bits/)
+
+> Reverse bits of a given 32 bits unsigned integer.
+> 
+> **Note:**
+> 
+> - Note that in some languages, such as Java, there is no unsigned integer type. In this case, both input and output will be given as a signed integer type. They should not affect your implementation, as the integer's internal binary representation is the same, whether it is signed or unsigned.
+> - In Java, the compiler represents the signed integers using [2's complement notation](https://en.wikipedia.org/wiki/Two%27s_complement). Therefore, in **Example 2** above, the input represents the signed integer `-3` and the output represents the signed integer `-1073741825`.
+> 
+> **Example 1:**
+> 
+> **Input:** n = 00000010100101000001111010011100
+> **Output:**    964176192 (00111001011110000010100101000000)
+> **Explanation:** The input binary string **00000010100101000001111010011100** represents the unsigned integer 43261596, so return 964176192 which its binary representation is **00111001011110000010100101000000**.
+> 
+> **Example 2:**
+> 
+> **Input:** n = 11111111111111111111111111111101
+> **Output:**   3221225471 (10111111111111111111111111111111)
+> **Explanation:** The input binary string **11111111111111111111111111111101** represents the unsigned integer 4294967293, so return 3221225471 which its binary representation is **10111111111111111111111111111111**.
+> 
+> **Constraints:**
+> 
+> - The input must be a **binary string** of length `32`
+> 
+> **Follow up:** If this function is called many times, how would you optimize it?
+
+Mask and shift (divide and conquer)
+
+A strategy of divide and conquer, we divide the original 32-bits into blocks with fewer bits via bit masking, then we reverse each block via bit shifting, and at the end we merge the result of each block to obtain the final result. 
+
+1. First, we break the original 32-bit into 2 blocks of 16 bits, and switch them. 
+2. We then break the 16-bits block into 2 blocks of 8 bits. Similarly, we switch the position of the 8-bits blocks 
+3. We then continue to break the blocks into smaller blocks, until we reach the level with the block of 1 bit. 
+4. At each of the above steps, we merge the intermediate results into a single integer which serves as the input for the next step.
+
+```python
+class Solution:
+  def reverseBits(self, n: int) -> int:
+    """
+    O(1), O(1)
+    """
+    
+    n = (n & 0b11111111111111110000000000000000) >> 16 | (n & 0b00000000000000001111111111111111) << 16
+    n = (n & 0b11111111000000001111111100000000) >> 8 | (n & 0b00000000111111110000000011111111) << 8
+    n = (n & 0b11110000111100001111000011110000) >> 4 | (n & 0b00001111000011110000111100001111) << 4
+    n = (n & 0b11001100110011001100110011001100) >> 2 | (n & 0b00110011001100110011001100110011) << 2
+    n = (n & 0b10101010101010101010101010101010) >> 1 | (n & 0b01010101010101010101010101010101) << 1
+    
+    return n
+```
 
 ---
 
 ## Dynamic Programming
 
 17. [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/)
+
+> You are climbing a staircase. It takes `n` steps to reach the top.
+> 
+> Each time you can either climb `1` or `2` steps. In how many distinct ways can you climb to the top?
+> 
+> **Example 1:**
+> 
+> **Input:** n = 2
+> **Output:** 2
+> **Explanation:** There are two ways to climb to the top.
+> 1. 1 step + 1 step
+> 2. 2 steps
+> 
+> **Example 2:**
+> 
+> **Input:** n = 3
+> **Output:** 3
+> **Explanation:** There are three ways to climb to the top.
+> 1. 1 step + 1 step + 1 step
+> 2. 1 step + 2 steps
+> 3. 2 steps + 1 step
+> 
+> **Constraints:**
+> 
+> - `1 <= n <= 45`
+
+We can reach i$^{th}$ step in one of two ways:
+1. Taking a single step from (i - 1)$^{th}$ step.
+2. Taking two steps from (i - 2)$^{th}$ step.
+
+So, the total number of ways to reach step i$^{th}$ is the sum of the number of ways from (i - 1)$^{th}$ step and the (i - 2$^{th}$ step.
+
+We get the transition function: `dp[i] = dp[i - 1] + dp[i - 2]`. This is the same function as fibonacci: `Fib(n) = Fib(n−1) + Fib(n−2)`
+
+```python
+class Solution:
+  def climbStairs(self, n: int) -> int:
+    """
+    O(N), O(N)
+    """
+    
+    if n == 1:
+      return n
+    
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    dp[2] = 2
+    
+    for i in range(3, n + 1):
+      dp[i] = dp[i-1] + dp[i-2]
+    
+    return dp[n]
+```
+
+We don't actually need to track the entire array, we can just do it 2 integers.
+
+```python
+class Solution:
+  def climbStairs(self, n: int) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    if n == 1:
+      return n
+    
+    a, b = 1, 2
+    
+    for _ in range(3, n + 1):
+      a, b = b, a + b
+
+    return b
+```
+
 18. [Coin Change](https://leetcode.com/problems/coin-change/)
+
+> You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money.
+> 
+> Return _the fewest number of coins that you need to make up that amount_. If that amount of money cannot be made up by any combination of the coins, return `-1`.
+> 
+> You may assume that you have an infinite number of each kind of coin.
+> 
+> **Example 1:**
+> 
+> **Input:** coins = [1,2,5], amount = 11
+> **Output:** 3
+> **Explanation:** 11 = 5 + 5 + 1
+> 
+> **Example 2:**
+> 
+> **Input:** coins = [2], amount = 3
+> **Output:** -1
+> 
+> **Example 3:**
+> 
+> **Input:** coins = [1], amount = 0
+> **Output:** 0
+> 
+> **Constraints:**
+> 
+> - `1 <= coins.length <= 12`
+> - `1 <= coins[i] <= 231 - 1`
+> - `0 <= amount <= 104`
+
+Bottom-up DP
+
+```python
+class Solution:
+  def coinChange(self, coins: List[int], amount: int) -> int:
+    """
+    O(N*C), O(N)
+    """
+    
+    dp = [float("inf")] * (amount + 1)
+    dp[0] = 0
+    
+    for i in range(amount + 1):
+      for coin in coins:
+        if coin <= i:
+          dp[i] = min(dp[i], dp[i-coin] + 1)
+    
+    return dp[amount] if dp[amount] != float("inf") else -1
+```
+
+Top down DP
+
+```python
+class Solution:
+  def coinChange(self, coins: List[int], amount: int) -> int:
+    """
+    O(N*C), O(N)
+    """
+  
+    @lru_cache(None) # TLE without caching
+    def dfs(rem):
+      if rem == 0:
+        return 0
+      
+      min_cost = math.inf
+      for coin in coins:
+        if coin <= rem:
+          res = dfs(rem - coin)
+        if res != -1:
+          min_cost = min(min_cost, res + 1)
+      
+      return min_cost if min_cost != math.inf else -1
+  
+    return dfs(amount)
+```
+
 19. [Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/)
+
+> Given an integer array `nums`, return _the length of the longest **strictly increasing subsequence**_.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [10,9,2,5,3,7,101,18]
+> **Output:** 4
+> **Explanation:** The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [0,1,0,3,2,3]
+> **Output:** 4
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [7,7,7,7,7,7,7]
+> **Output:** 1
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 2500`
+> - `-104 <= nums[i] <= 104`
+> 
+> **Follow up:** Can you come up with an algorithm that runs in `O(n log(n))` time complexity?
+
+```
+input: [1, 2, 4, 3]
+idx:    0  1  2  3
+  
+
+                                      .
+
+                              /0
+
+                            [1]
+
+                          /1             \2            \3
+
+                       [1, 2]            [1, 4]         [1, 3]
+
+                     /2       \3            _             _
+
+                 [1, 2, 4]     [1, 2, 4]
+
+                /3                _
+
+              X
+```
+
+We can store the result, and use to skip computation for similar branches in other subtrees.
+  
+```
+LIS[3] = 1 (default = len([nums[3]]))
+
+
+For LIS[2], we check if nums[2] < nums[3] => 4 < 3, no, so we can't include that.
+So, LIS[2] = 1
+
+
+For LIS[1], we check if nums[1] < nums[2] => 2 < 4, yes, so we can include that. We also check if nums[1] < nums[3] => 2 < 3, yes, so that's in contention as well.
+So, LIS[1] = 1 + max(LIS[2], LIS[3]) = 1 + max(1, 1) = 2
+
+
+For LIS[0], nums[0] < nums[1] => 1 < 2; nums[0] < nums[2] => 1 < 4; nums[0] < nums[3] => 1 < 3
+LIS[0] = 1 + max(LIS[1], LIS[2], LIS[3]) = 1 + max(2, 1, 1) = 3
+```
+
+(Realising a Dynamic Programming Problem)
+
+This problem has two important attributes that let us know it should be solved by dynamic programming:
+1. The question is asking for the maximum or minimum of something.
+2. We have to make decisions that may depend on previously made decisions, which is very typical of a problem involving subsequences.
+
+As we go through the input, each "decision" we must make is simple: is it worth it to consider this number? If we use a number, it may contribute towards an increasing subsequence, but it may also eliminate larger elements that came before it.
+
+For example, let's say we have `nums = [5, 6, 7, 8, 1, 2, 3]`. It isn't worth using the 1, 2, or 3, since using any of them would eliminate 5, 6, 7, and 8, which form the longest increasing subsequence.
+
+(A Framework to Solve Dynamic Programming Problems)
+
+Typically, dynamic programming problems can be solved with three main components.
+
+First, we need some function or array that represents the answer to the problem from a given state. For this problem, let's say that we have an array `dp`. 
+
+Let's say that `dp[i]` represents the length of the longest increasing subsequence that ends with the i$^{th}$ element.
+
+The "state" is one-dimensional since it can be represented with only one variable - the index i.
+
+Second, we need a way to transition between states, such as `dp[5]` and `dp[7]`, i.e. a recurrence relation.
+
+Let's say we know `dp[0]`, `dp[1]`, and `dp[2]`. We need to find `dp[3]` given this information.
+
+Since `dp[2]` represents the length of the longest increasing subsequence that ends with `nums[2]`, if `nums[3] > nums[2]`, then we can simply take the subsequence ending at i = 2 and append `nums[3]` to it, increasing the length by 1.
+
+The same can be said for `nums[0]` and `nums[1]` if `nums[3]` is larger. We need to maximise `dp[3]`, so we need to check all 3.
+
+Formally, the recurrence relation is: `dp[i] = max(dp[j] + 1) for all j where nums[j] < nums[i] and j < i`.
+
+Third, we need a base case. For this problem, we can initialise every element of `dp` to 1, since every element on its own is technically an increasing subsequence.
+
+```python
+class Solution:
+  def lengthOfLIS(self, nums: List[int]) -> int:
+    """
+    recurrence relation: dp[i] = max(dp[j] + 1) for all j where nums[j] < nums[i] and j < i
+    
+    O(N^2), O(N)
+    """
+    
+    N = len(nums)
+    dp = [1] * N
+    
+    for i in range(N):
+      for j in range(i):
+        if nums[i] > nums[j]:
+          dp[i] = max(dp[i], dp[j] + 1)
+    
+    return max(dp)
+```
+
+Intelligently build a subsequence
+
+Consider the example `nums = [8, 1, 6, 2, 3, 10]`.
+
+Let's try to build an increasing subsequence starting with an empty one: `sub = []`.
+
+1. At the first element 8, we might as well take it since it's better than nothing, so `sub = [8]`.
+2. At the second element 1, we can't increase the length of the subsequence since 8 >= 1, so we have to choose only one element to keep. Let's take the 1 since there may be elements later on that are greater than 1 but less than 8, now we have `sub = [1]`.
+3. At the third element 6, we can build on our subsequence since 6 > 1, now `sub = [1, 6]`.
+4. At the fourth element 2, we can't build on our subsequence since 6 >= 2, but can we improve on it for the future? Similar to the decision we made at the second element, if we replace the 6 with 2, we will open the door to using elements that are greater than 2 but less than 6 in the future, so `sub = [1, 2]`.
+5. At the fifth element 3, we can build on our subsequence since 3 > 2. Notice that this was only possible because of the swap we made in the previous step, so `sub = [1, 2, 3]`.
+6. At the last element 10, we can build on our subsequence since 10 > 3, giving a final subsequence `sub = [1, 2, 3, 10]`. The length of sub is our answer.
+
+The best way to build an increasing subsequence is: for each element num, if num is greater than the largest element in our subsequence, then add it to the subsequence.
+
+Otherwise, perform a linear scan through the subsequence starting from the smallest element and replace the first element that is greater than or equal to num with num. This opens the door for elements that are greater than num but less than the element replaced to be included in the sequence.
+
+This algorithm does not always generate a valid subsequence of the input, but the length of the subsequence will always equal the length of the longest increasing subsequence. For example, with the input [3, 4, 5, 1], at the end we will have sub = [1, 4, 5], which isn't a subsequence, but the length is still correct. The length remains correct because the length only changes when a new element is larger than any element in the subsequence. In that case, the element is appended to the subsequence instead of replacing an existing element.
+
+```python
+class Solution:
+  def lengthOfLIS(self, nums: List[int]) -> int:
+    """
+    O(N^2)
+    Consider an input where the first half is [1, 2, 3, 4, ..., 99998, 99999], then the second half is [99998, 99998, 99998, ..., 99998, 99998].
+    We would need to iterate (N/2)^2 times for the second half because there are N/2 elements equal to 99998, and a linear scan for each one takes N/2 iterations.
+    
+    O(N)
+    """
+    
+    sub = [nums[0]]
+    
+    for num in nums[1:]:
+      if num > sub[-1]:
+        sub.append(num)
+      else:
+        # put num in place of the element in sub which is greater than num
+        i = 0
+        while num > sub[i]:
+          i += 1
+        sub[i] = num # sub[i] was holding an element greater than or equal to num, replace with num
+    
+    return len(sub)
+```
+
+Binary search
+
+Instead of a linear scan to find the first element in sub that is greater than or equal to num, we can do a binary search, as the sub is in sorted order.
+
+```python
+class Solution:
+  def bisectLeft(sub, num):
+    l, r = 0, len(sub) - 1
+    
+    while l < r:
+      m = l + (r - l) // 2
+      
+      if num == m:
+        return m
+      elif num < sub[m]:
+        r = m - 1
+      else:
+        l = m + 1
+
+    return l
+
+  def lengthOfLIS(self, nums: List[int]) -> int:
+    """
+    O(NlogN), O(N)
+    """
+    
+    sub = []
+
+    for num in nums:
+      i = bisectLeft(sub, num)
+      if i == len(sub): # num is greater than any element in sub
+        sub.append(num)
+      else: # replace the first element in sub greater than or equal to num
+        sub[i] = num
+    
+    return len(sub)
+```
+
 20. [Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
 21. [Word Break Problem](https://leetcode.com/problems/word-break/)
 22. [Combination Sum](https://leetcode.com/problems/combination-sum-iv/)
