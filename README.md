@@ -1394,13 +1394,752 @@ class Solution:
 ```
 
 20. [Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
+
+> Given two strings `text1` and `text2`, return _the length of their longest **common subsequence**._ If there is no **common subsequence**, return `0`.
+> 
+> A **subsequence** of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters.
+> 
+> - For example, `"ace"` is a subsequence of `"abcde"`.
+> 
+> A **common subsequence** of two strings is a subsequence that is common to both strings.
+> 
+> **Example 1:**
+> 
+> **Input:** text1 = "abcde", text2 = "ace" 
+> **Output:** 3  
+> **Explanation:** The longest common subsequence is "ace" and its length is 3.
+> 
+> **Example 2:**
+> 
+> **Input:** text1 = "abc", text2 = "abc"
+> **Output:** 3
+> **Explanation:** The longest common subsequence is "abc" and its length is 3.
+> 
+> **Example 3:**
+> 
+> **Input:** text1 = "abc", text2 = "def"
+> **Output:** 0
+> **Explanation:** There is no such common subsequence, so the result is 0.
+> 
+> **Constraints:**
+> 
+> - `1 <= text1.length, text2.length <= 1000`
+> - `text1` and `text2` consist of only lowercase English characters.
+
+2D DP
+
+`dp[i][j]` represents the length of the LCS of the first `i` characters of `text1` and the first `j` characters of `text2`.
+
+For each character pair `(text1[i-1], text2[j-1])` (subtracting one since our DP array is 1-indexed):
+- If the characters match: `dp[i][j]=dp[i−1][j−1]+1`. This means we can extend the length of the LCS by 1.
+- If the characters do not match: `dp[i][j]=max⁡(dp[i−1][j],dp[i][j−1])`. This means the LCS length is the maximum length found by either ignoring the current character of `text1` or `text2`.
+
+Let's take `text1 = "abcde"` and `text2 = "ace"`.
+
+| i   | j   | text1[i-1] | text2[j-1] | Action   | dp[i][j] | DP Table State                                                                         |
+| --- | --- | ---------- | ---------- | -------- | -------- | -------------------------------------------------------------------------------------- |
+| 1   | 1   | 'a'        | 'a'        | Match    | 1        | `[[0, 0, 0, 0], [0, 1, 0, 0], ...]`                                                    |
+| 1   | 2   | 'a'        | 'c'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 0], ...]`                                                    |
+| 1   | 3   | 'a'        | 'e'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 1], ...]`                                                    |
+| 2   | 1   | 'b'        | 'a'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 0, 0], ...]`                                      |
+| 2   | 2   | 'b'        | 'c'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 0], ...]`                                      |
+| 2   | 3   | 'b'        | 'e'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], ...]`                                      |
+| 3   | 1   | 'c'        | 'a'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 0, 0], ...]`                        |
+| 3   | 2   | 'c'        | 'c'        | Match    | 2        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 0], ...]`                        |
+| 3   | 3   | 'c'        | 'e'        | No Match | 2        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], ...]`                        |
+| 4   | 1   | 'd'        | 'a'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 0, 0], ...]`          |
+| 4   | 2   | 'd'        | 'c'        | No Match | 2        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 2, 0], ...]`          |
+| 4   | 3   | 'd'        | 'e'        | No Match | 2        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 2, 2], ...]`          |
+| 5   | 1   | 'e'        | 'a'        | No Match | 1        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 2, 2], [0, 1, 0, 0]]` |
+| 5   | 2   | 'e'        | 'c'        | No Match | 2        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 2, 2], [0, 1, 2, 0]]` |
+| 5   | 3   | 'e'        | 'e'        | Match    | 3        | `[[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 2, 2], [0, 1, 2, 3]]` |
+
+```python
+class Solution:
+  def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+    """
+    O(MN), O(MN)
+    """
+    
+    m, n = len(text1), len(text2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(1, m + 1):
+      for j in range(1, n + 1):
+        if text1[i - 1] == text2[j - 1]:
+          dp[i][j] = dp[i - 1][j - 1] + 1
+        else:
+          dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    
+    return dp[m][n]
+```
+
+DP space optimised
+
+The outer loop iterates through `text1`, and the inner loop iterates through `text2`. If characters match, we increment the value from `prev[j - 1]` (the diagonal). Else, we take the maximum from either ignoring the current character in `text1` or `text2`.
+
+```python
+class Solution:
+  def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+    """
+    O(MN), O(min(M, N))
+    """
+    
+    m, n = len(text1), len(text2)
+    
+    # Ensure we use the smaller array for optimization
+    if m < n:
+      text1, text2, m, n = text2, text1, n, m
+    
+    # Initialize previous and current arrays
+    prev = [0] * (n + 1)
+    curr = [0] * (n + 1)
+    
+    # Fill the DP table row by row
+    for i in range(1, m + 1):
+      for j in range(1, n + 1):
+        if text1[i - 1] == text2[j - 1]:
+          curr[j] = prev[j - 1] + 1
+        else:
+          curr[j] = max(prev[j], curr[j - 1])
+    
+      # Swap references for the next iteration
+      prev, curr = curr, prev
+    
+    return prev[n] # The result is in prev[n]
+```
+
 21. [Word Break Problem](https://leetcode.com/problems/word-break/)
+
+> Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be segmented into a space-separated sequence of one or more dictionary words.
+> 
+> **Note** that the same word in the dictionary may be reused multiple times in the segmentation.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "leetcode", wordDict = ["leet","code"]
+> **Output:** true
+> **Explanation:** Return true because "leetcode" can be segmented as "leet code".
+> 
+> **Example 2:**
+> 
+> **Input:** s = "applepenapple", wordDict = ["apple","pen"]
+> **Output:** true
+> **Explanation:** Return true because "applepenapple" can be segmented as "apple pen apple".
+> Note that you are allowed to reuse a dictionary word.
+> 
+> **Example 3:**
+> 
+> **Input:** s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+> **Output:** false
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length <= 300`
+> - `1 <= wordDict.length <= 1000`
+> - `1 <= wordDict[i].length <= 20`
+> - `s` and `wordDict[i]` consist of only lowercase English letters.
+> - All the strings of `wordDict` are **unique**.
+
+DP
+
+For each position `i` in the string, check all previous positions `j` (from 0 to `i-1`).
+
+If `dp[j]` is `true` (meaning the substring `s[0:j]` can be segmented) and the substring `s[j:i]` is in the dictionary, then set `dp[i]` to `true`.
+
+The value of `dp[len(s)]` will indicate if the whole string can be segmented.
+
+```python
+class Solution:
+  def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+    """
+    O(N^2), O(N)
+    """
+    
+    word_set = set(wordDict)  # Convert list to set for O(1) lookups
+    dp = [False] * (len(s) + 1)
+    dp[0] = True  # Base case: empty string
+    
+    for i in range(1, len(s) + 1):
+      for j in range(i):
+        # if string till j is breakable (d[j]) and the next substring till i (s[i:j]) is in wordDict, we can mark string till i (dp[i]) to be breakable
+        if d[j] and s[j:i] in word_set: 
+          dp[i] = True
+          break
+    
+    return dp[N]
+```
+
 22. [Combination Sum](https://leetcode.com/problems/combination-sum-iv/)
+
+> Given an array of **distinct** integers `candidates` and a target integer `target`, return _a list of all **unique combinations** of_ `candidates` _where the chosen numbers sum to_ `target`_._ You may return the combinations in **any order**.
+> 
+> The **same** number may be chosen from `candidates` an **unlimited number of times**. Two combinations are unique if the 
+> 
+> frequency
+> 
+>  of at least one of the chosen numbers is different.
+> 
+> The test cases are generated such that the number of unique combinations that sum up to `target` is less than `150` combinations for the given input.
+> 
+> **Example 1:**
+> 
+> **Input:** candidates = [2,3,6,7], target = 7
+> **Output:** [[2,2,3],[7]]
+> **Explanation:**
+> 2 and 3 are candidates, and 2 + 2 + 3 = 7. Note that 2 can be used multiple times.
+> 7 is a candidate, and 7 = 7.
+> These are the only two combinations.
+> 
+> **Example 2:**
+> 
+> **Input:** candidates = [2,3,5], target = 8
+> **Output:** [[2,2,2,2],[2,3,3],[3,5]]
+> 
+> **Example 3:**
+> 
+> **Input:** candidates = [2], target = 1
+> **Output:** []
+> 
+> **Constraints:**
+> 
+> - `1 <= candidates.length <= 30`
+> - `2 <= candidates[i] <= 40`
+> - All elements of `candidates` are **distinct**.
+> - `1 <= target <= 40`
+
+Backtracking
+
+We use a recursive backtracking approach to explore all potential combinations.
+
+Start from an empty combination and build it up by adding candidates. If the sum exceeds the target, backtrack. If the sum equals the target, store the combination.
+
+DFS v/s Backtracking
+
+DFS is primarily a traversal algorithm used to explore all nodes in a graph or tree structure. It can be used to find a path, search for a specific node, or explore all connected components.
+
+Backtracking is a refinement of DFS used to solve constraint satisfaction problems, where we want to find all or some solutions to a problem by exploring potential candidates and abandoning them if they don't satisfy the constraints.
+
+```python
+class Solution:
+  def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+    """
+    N be the number of candidates, T be the target value, M be the target value
+    
+    O(N^(T/min(candidates))), O(T/M)
+    """
+    
+    def backtrack(start, path, remaining):
+      if remaining < 0:
+        return
+        
+      if remaining == 0:
+        result.append(path)
+        return
+      
+      for i in range(start, len(candidates)):
+        backtrack(i, path + [candidates[i]], remaining - candidates[i])
+    
+    result = []
+    backtrack(0, [], target)
+    
+    return result
+```
+
 23. [House Robber](https://leetcode.com/problems/house-robber/)
+
+> You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and **it will automatically contact the police if two adjacent houses were broken into on the same night**.
+> 
+> Given an integer array `nums` representing the amount of money of each house, return _the maximum amount of money you can rob tonight **without alerting the police**_.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [1,2,3,1]
+> **Output:** 4
+> **Explanation:** Rob house 1 (money = 1) and then rob house 3 (money = 3).
+> Total amount you can rob = 1 + 3 = 4.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [2,7,9,3,1]
+> **Output:** 12
+> **Explanation:** Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).
+> Total amount you can rob = 2 + 9 + 1 = 12.
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 100`
+> - `0 <= nums[i] <= 400`
+
+DP
+
+State Transition
+
+For each house `i`, the robber has two options:
+1. Rob the current house: Add the money from the current house (`nums[i]`) to the maximum amount from `i-2` houses (`dp[i-2]`).
+  2. Skip the current house: Take the maximum amount from the previous house (`dp[i-1]`).
+
+Thus, the recurrence relation is: `dp[i]=max⁡(dp[i−1],nums[i]+dp[i−2])`
+
+```python
+class Solution:
+  def rob(self, nums: List[int]) -> int:
+    """
+    O(N), O(N)
+    """
+    
+    N = len(nums)
+    if N == 1:
+      return nums[0]
+    
+    dp = [0] * N
+    dp[0] = nums[0]
+    dp[1] = max(nums[0], nums[1])
+    
+    for i in range(2, N):
+      dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+    
+    return dp[N-1]
+```
+
+Space optimisation
+
+Since we only need the last two values at any time, we can replace the array with 2 variables.
+
+```python
+class Solution:
+  def rob(self, nums: List[int]) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    N = len(nums)
+    if N == 1:
+      return nums[0]
+    
+    a, b = nums[0], max(nums[0], nums[1])
+    
+    for i in range(2, N):
+      a, b = b, max(b, a + nums[i])
+    
+    return b
+```
+
+Recursive
+
+```python
+class Solution:
+  def rob(self, nums: List[int]) -> int:
+    """
+    O(N), O(N)
+    """
+    
+    @lru_cache(None)
+    def robFrom(i):
+      if i == 0:
+        return nums[0]
+      if i == 1:
+        return max(nums[0], nums[1])
+    
+      return max(robFrom(i-1), robFrom(i-2) + nums[i])
+    
+    return robFrom(len(nums) - 1)
+```
+
 24. [House Robber II](https://leetcode.com/problems/house-robber-ii/)
+
+> You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. All houses at this place are **arranged in a circle.**That means the first house is the neighbor of the last one. Meanwhile, adjacent houses have a security system connected, and **it will automatically contact the police if two adjacent houses were broken into on the same night**.
+> 
+> Given an integer array `nums` representing the amount of money of each house, return _the maximum amount of money you can rob tonight **without alerting the police**_.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [2,3,2]
+> **Output:** 3
+> **Explanation:** You cannot rob house 1 (money = 2) and then rob house 3 (money = 2), because they are adjacent houses.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [1,2,3,1]
+> **Output:** 4
+> **Explanation:** Rob house 1 (money = 1) and then rob house 3 (money = 3).
+> Total amount you can rob = 1 + 3 = 4.
+> 
+> **Example 3:**
+> 
+> **Input:** nums = [1,2,3]
+> **Output:** 3
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 100`
+> - `0 <= nums[i] <= 1000`
+
+DP (built over the solution of House Robber I)
+
+Since the houses are arranged in a circle, we can either:
+1. Rob houses from index `0` to `n-2` (excluding the last house).
+2. Rob houses from index `1` to `n-1` (excluding the first house).
+
+The result will be the maximum of these two scenarios.
+
+```python
+class Solution:
+  def rob_I(self, nums: List[int]) -> int:
+    N = len(nums)
+    if N == 1:
+      return nums[0]
+    
+    a, b = nums[0], max(nums[0], nums[1])
+    
+    for i in range(2, N):
+      a, b = b, max(b, a + nums[i])
+    
+    return b
+
+  def rob(self, nums: List[int]) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    N = len(nums)
+    if N == 1:
+      return nums[0]
+    
+    return max(self.rob_I(nums[:-1]), self.rob_I(nums[1:]))
+```
+
 25. [Decode Ways](https://leetcode.com/problems/decode-ways/)
+
+> You have intercepted a secret message encoded as a string of numbers. The message is **decoded** via the following mapping:
+> 
+> `"1" -> 'A'   "2" -> 'B'   ...   "25" -> 'Y'   "26" -> 'Z'`
+> 
+> However, while decoding the message, you realize that there are many different ways you can decode the message because some codes are contained in other codes (`"2"` and `"5"` vs `"25"`).
+> 
+> For example, `"11106"` can be decoded into:
+> 
+> - `"AAJF"` with the grouping `(1, 1, 10, 6)`
+> - `"KJF"` with the grouping `(11, 10, 6)`
+> - The grouping `(1, 11, 06)` is invalid because `"06"` is not a valid code (only `"6"`is valid).
+> 
+> Note: there may be strings that are impossible to decode.  
+>   
+> Given a string s containing only digits, return the **number of ways** to **decode** it. If the entire string cannot be decoded in any valid way, return `0`.
+> 
+> The test cases are generated so that the answer fits in a **32-bit** integer.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "12"
+> 
+> **Output:** 2
+> 
+> **Explanation:**
+> 
+> "12" could be decoded as "AB" (1 2) or "L" (12).
+> 
+> **Example 2:**
+> 
+> **Input:** s = "226"
+> 
+> **Output:** 3
+> 
+> **Explanation:**
+> 
+> "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
+> 
+> **Example 3:**
+> 
+> **Input:** s = "06"
+> 
+> **Output:** 0
+> 
+> **Explanation:**
+> 
+> "06" cannot be mapped to "F" because of the leading zero ("6" is different from "06"). In this case, the string is not a valid encoding, so return 0.
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length <= 100`
+> - `s` contains only digits and may contain leading zero(s).
+
+DP
+
+State Transition
+
+For each digit from index 2 to `n`, calculate `dp[i]` based on the following conditions:
+1. If `s[i-1]` (current digit) is between '1' and '9', add `dp[i-1]` (ways to decode up to the previous digit).
+2. If the two digits `s[i-2:i]` (previous and current digits) form a valid number between '10' and '26', add `dp[i-2]`(ways to decode up to two digits before).
+
+```python
+class Solution:
+  def numDecodings(self, s: str) -> int:
+    """
+    O(N), O(N)
+    """
+    
+    N = len(s)
+    dp = [0] * (N + 1)
+    dp[0] = 1 # empty string
+    dp[1] = 1 if s[0] != '0' else 0 # valid if first character is not '0'
+    
+    for i in range(2, N + 1):
+      # check single digit decode
+      if s[i - 1] != '0':
+        dp[i] += dp[i - 1]
+      
+      # check double digit decode
+      if 10 <= int(s[i-2:i]) <= 26:
+        dp[i] += dp[i - 2]
+    
+    return dp[N]
+```
+
+Why consider empty string case as `dp[0]`?
+
+This design choice simplifies the implementation and reduces the need for additional checks in the loop.
+
+Base Case
+
+In many dynamic programming problems, especially those that build on previous results, it’s useful to define the number of ways to decode an empty substring as `1`. This means that if there's nothing to decode, there's exactly one way to interpret it: do nothing.
+
+Uniform Indexing
+
+- Defining `dp[0]` allows for a uniform way to handle the indices, where `dp[i]` directly corresponds to decoding the substring `s[0:i]`.
+- Without `dp[0]`, we would need to handle the cases for the first character separately, which could complicate the logic.
+
+Space optimisation for DP: we can use 2 variable approach
+
+```python
+class Solution:
+  def numDecodings(self, s: str) -> int:
+    """
+    O(N), O(1)
+    """
+    
+    N = len(s)
+    a = 1
+    b = 1 if s[0] != '0' else 0
+    
+    for i in range(2, N + 1):
+      curr = 0
+      
+      # check single digit decode
+      if s[i - 1] != '0':
+        curr += b
+      
+      # check double digit decode
+      if 10 <= int(s[i-2:i]) <= 26:
+        curr += a
+      
+      a, b = b, curr
+    
+    return b
+```
+
 26. [Unique Paths](https://leetcode.com/problems/unique-paths/)
+
+> There is a robot on an `m x n` grid. The robot is initially located at the **top-left corner**(i.e., `grid[0][0]`). The robot tries to move to the **bottom-right corner** (i.e., `grid[m - 1][n - 1]`). The robot can only move either down or right at any point in time.
+> 
+> Given the two integers `m` and `n`, return _the number of possible unique paths that the robot can take to reach the bottom-right corner_.
+> 
+> The test cases are generated so that the answer will be less than or equal to `2 * 109`.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2018/10/22/robot_maze.png)
+> 
+> **Input:** m = 3, n = 7
+> **Output:** 28
+> 
+> **Example 2:**
+> 
+> **Input:** m = 3, n = 2
+> **Output:** 3
+> **Explanation:** From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:
+> 1. Right -> Down -> Down
+> 2. Down -> Down -> Right
+> 3. Down -> Right -> Down
+> 
+> **Constraints:**
+> 
+> - `1 <= m, n <= 100`
+
+Backtracking
+
+```python
+class Solution:
+  def uniquePaths(self, m: int, n: int) -> int:
+    """
+    O(mn), O(mn)
+    """
+    
+    @lru_cache(None)
+    def backtrack(x, y):
+      if x == m - 1 and y == n - 1:
+        return 1
+      
+      if x >= m or y >= n:
+        return 0
+      
+      return backtrack(x + 1, y) + backtrack(x, y + 1)
+    
+    return backtrack(0, 0)
+```
+
+DP
+
+Base case
+
+The number of ways to reach any cell in the first row or the first column is `1` since there's only one way to get there: either move right (for the first row) or move down (for the first column).
+
+State transition
+
+For each cell `(i, j)`, the number of unique paths to reach that cell is the sum of unique paths to reach the cell directly above it `(i-1, j)` and the cell directly to the left `(i, j-1)`:  `dp[i][j]=dp[i−1][j]+dp[i][j−1]`
+
+```python
+class Solution:
+  def uniquePaths(self, m: int, n: int) -> int:
+    """
+    O(mn), O(mn)
+    """
+    
+    dp = [[0] * n for _ in range(m)]
+    
+    for i in range(m):
+      dp[i][0] = 1 # Only one way to reach any cell in the first column
+    
+    for j in range(n):
+      dp[0][j] = 1 # Only one way to reach any cell in the first row
+    
+    for i in range(1, m):
+      for j in range(1, n):
+        dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+    
+    return dp[m - 1][n - 1]
+```
+
+Space optimisation
+
+To optimise the space complexity, we can reduce the 2D DP array to just one 1D array since each row only depends on the current and previous rows.
+
+```python
+class Solution:
+  def uniquePaths(self, m: int, n: int) -> int:
+    """
+    O(mn), O(n)
+    """
+    
+    dp = [1] * n  # first row
+    
+    for i in range(1, m):
+      for j in range(1, n):
+        dp[j] += dp[j - 1]
+    
+    return dp[n - 1]
+```
+
+Combination formula: `C(k,r) = k! / (r!(k−r)!)​`
+
+To travel from the top-left corner to the bottom-right corner of an `m x n` grid, we must make a total of `(m - 1)`downward moves and `(n - 1)` rightward moves.
+
+The total number of moves is thus: `(m − 1) + (n − 1) = m + n − 2`
+
+Out of these total moves, we need to choose `(m - 1)` moves to go down (or equivalently, `(n - 1)` moves to go right).
+
+Thus, the number of unique paths will be `C(m + n − 2, m − 1) = (m + n - 2)! / ((m - 1)!(n - 1)!)`.
+
+```python
+from math import factorial
+
+class Solution:
+  def uniquePaths(self, m: int, n: int) -> int:
+    """
+    In python, k! can be computed in O(k(logkloglogk)^2), let's say that's k' complexity
+    
+    O(m' + n'), O(1)
+    """
+    
+    return factorial(m - 1 + n - 1) // factorial(m - 1) // factorial(n - 1)
+```
+
 27. [Jump Game](https://leetcode.com/problems/jump-game/)
+
+> You are given an integer array `nums`. You are initially positioned at the array's **first index**, and each element in the array represents your maximum jump length at that position.
+> 
+> Return `true` _if you can reach the last index, or_ `false` _otherwise_.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [2,3,1,1,4]
+> **Output:** true
+> **Explanation:** Jump 1 step from index 0 to 1, then 3 steps to the last index.
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [3,2,1,0,4]
+> **Output:** false
+> **Explanation:** You will always arrive at index 3 no matter what. Its maximum jump length is 0, which makes it impossible to reach the last index.
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 104`
+> - `0 <= nums[i] <= 105`
+
+DP
+
+Iterate through the array, and for each index `i`, if `dp[i]` is `True`, check how far we can jump from that index. Update the subsequent indices that can be reached from `i` as `True`.
+
+```python
+class Solution:
+  def canJump(self, nums: List[int]) -> bool:
+    """
+    O(N^2), O(N)
+    """
+    
+    N = len(nums)
+    dp = [False] * N
+    dp[0] = True # Starting position
+    
+    for i in range(N):
+      if dp[i]: # If the current position is reachable
+        furthest_jump = min(N, nums[i] + 1)
+        for j in range(1, furthest_jump):
+          if i + j < N:
+            # Mark reachable positions
+            dp[i + j] = True 
+            
+            # Early exit if we can reach the last index
+            if dp[-1]: 
+              return True
+    
+    return dp[-1]
+```
+
+Greedy
+
+The idea is to keep track of the farthest index we can reach while iterating through the array. If at any point our current index exceeds the farthest reachable index, it means we cannot proceed further.
+
+```python
+class Solution:
+  def canJump(self, nums: List[int]) -> bool:
+    """
+    O(N), O(1)
+    """
+    
+    N = len(nums)
+    max_reachable = 0
+    
+    for i in range(N):
+      if max_reachable < i:
+        return False
+      
+      max_reachable = max(max_reachable, i + nums[i])
+      
+      if max_reachable >= N - 1:
+        return True
+```
 
 ---
 
