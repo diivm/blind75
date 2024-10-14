@@ -2146,9 +2146,324 @@ class Solution:
 ## Graph
 
 28. [Clone Graph](https://leetcode.com/problems/clone-graph/)
+
+> Given a reference of a node in a **[connected](https://en.wikipedia.org/wiki/Connectivity_(graph_theory)#Connected_graph)** undirected graph.
+> 
+> Return a [**deep copy**](https://en.wikipedia.org/wiki/Object_copying#Deep_copy) (clone) of the graph.
+> 
+> Each node in the graph contains a value (`int`) and a list (`List[Node]`) of its neighbors.
+> 
+> **Test case format:**
+> 
+> For simplicity, each node's value is the same as the node's index (1-indexed). For example, the first node with `val == 1`, the second node with `val == 2`, and so on. The graph is represented in the test case using an adjacency list.
+> 
+> **An adjacency list** is a collection of unordered **lists** used to represent a finite graph. Each list describes the set of neighbors of a node in the graph.
+> 
+> The given node will always be the first node with `val = 1`. You must return the **copy of the given node** as a reference to the cloned graph.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2019/11/04/133_clone_graph_question.png)
+> 
+> **Input:** adjList = [[2,4],[1,3],[2,4],[1,3]]
+> **Output:** [[2,4],[1,3],[2,4],[1,3]]
+> **Explanation:** There are 4 nodes in the graph.
+> 1st node (val = 1)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).
+> 2nd node (val = 2)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).
+> 3rd node (val = 3)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).
+> 4th node (val = 4)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/01/07/graph.png)
+> 
+> **Input:** adjList = [[]]
+> **Output:** [[]]
+> **Explanation:** Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.
+> 
+> **Example 3:**
+> 
+> **Input:** adjList = []
+> **Output:** []
+> **Explanation:** This an empty graph, it does not have any nodes.
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the graph is in the range `[0, 100]`.
+> - `1 <= Node.val <= 100`
+> - `Node.val` is unique for each node.
+> - There are no repeated edges and no self-loops in the graph.
+> - The Graph is connected and all nodes can be visited starting from the given node.
+
+We can use either Depth-First Search (DFS) or Breadth-First Search (BFS) to traverse the graph and clone each node and its neighbours.
+
+A hash map will help to keep track of already cloned nodes to avoid infinite loops and duplicate copies.
+
+```python
+class Solution:
+  visited = {}
+
+  def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
+    """
+    O(V + E), O(V)
+    """
+    
+    if not node:
+      return None
+    
+    if node in self.visited:
+      return self.visited[node]
+    
+    clone = Node(node.val)
+    self.visited[node] = clone
+    clone.neighbors = [self.cloneGraph(neighbor) for neighbor in node.neighbors]
+    
+    """
+    shouldn't do:
+    
+    ```
+    clone = Node(node.val, [self.cloneGraph(neighbor) for neighbor in node.neighbors])
+    self.visited[node] = clone
+    ```
+    
+    we need to add the cloned node to visited dict first before we go on to the neighbors, otherwise we'll reach max recursion depth upon encountering this node during the neighbor's cloning
+    """
+    
+    return clone
+```
+
 29. [Course Schedule](https://leetcode.com/problems/course-schedule/)
+
+> There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you **must** take course `bi` first if you want to take course `ai`.
+> 
+> - For example, the pair `[0, 1]`, indicates that to take course `0` you have to first take course `1`.
+> 
+> Return `true` if you can finish all courses. Otherwise, return `false`.
+> 
+> **Example 1:**
+> 
+> **Input:** numCourses = 2, prerequisites = [[1,0]]
+> **Output:** true
+> **Explanation:** There are a total of 2 courses to take. 
+> To take course 1 you should have finished course 0. So it is possible.
+> 
+> **Example 2:**
+> 
+> **Input:** numCourses = 2, prerequisites = [[1,0],[0,1]]
+> **Output:** false
+> **Explanation:** There are a total of 2 courses to take. 
+> To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+> 
+> **Constraints:**
+> 
+> - `1 <= numCourses <= 2000`
+> - `0 <= prerequisites.length <= 5000`
+> - `prerequisites[i].length == 2`
+> - `0 <= ai, bi < numCourses`
+> - All the pairs prerequisites[i] are **unique**.
+
+Graph Construction: Each prerequisite pair `[a, b]` indicates a directed edge from course `b` to course `a` (i.e., we must complete course `b`before course `a`).
+
+Kahn’s Algorithm
+
+This algorithm is used to perform a topological sort of the directed graph. It helps detect cycles in the graph. If a cycle is present, it means it's impossible to finish all courses.
+
+Use a queue to perform a breadth-first search (BFS):
+- Dequeue a course, add it to the count of processed courses, and reduce the in-degrees of its dependent courses.
+- If a dependent course's in-degree drops to zero, enqueue it.
+
+```python
+class Solution:
+  def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+    """
+    O(V + E), O(V + E)
+    """
+    
+    indegree = [0] * numCourses
+    graph = defaultdict(set)
+    
+    for course, prereq in prerequisites:
+      graph[prereq].add(course)  # prereq -> course
+      indegree[course] += 1
+    
+    # Initialize the queue with courses having no prerequisites
+    queue = []
+    for course in range(numCourses):
+      if indegree[course] == 0:
+        queue.append(course)
+    
+    processed_nodes = 0
+    while queue:
+      course = queue.pop(0)
+      processed_nodes += 1
+      
+      for next_course in graph[course]:
+        indegree[next_course] -= 1  # Remove the prerequisite
+        if indegree[next_course] == 0:
+          queue.append(next_course)  # Add to queue if no more prerequisites
+    
+    return processed_nodes == numCourses
+```
+
 30. [Pacific Atlantic Water Flow](https://leetcode.com/problems/pacific-atlantic-water-flow/)
+
+> There is an `m x n` rectangular island that borders both the **Pacific Ocean** and **Atlantic Ocean**. The **Pacific Ocean** touches the island's left and top edges, and the **Atlantic Ocean** touches the island's right and bottom edges.
+> 
+> The island is partitioned into a grid of square cells. You are given an `m x n` integer matrix `heights` where `heights[r][c]` represents the **height above sea level** of the cell at coordinate `(r, c)`.
+> 
+> The island receives a lot of rain, and the rain water can flow to neighboring cells directly north, south, east, and west if the neighboring cell's height is **less than or equal to** the current cell's height. Water can flow from any cell adjacent to an ocean into the ocean.
+> 
+> Return _a **2D list** of grid coordinates_ `result` _where_ `result[i] = [ri, ci]` _denotes that rain water can flow from cell_ `(ri, ci)` _to **both** the Pacific and Atlantic oceans_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/06/08/waterflow-grid.jpg)
+> 
+> **Input:** heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]
+> **Output:** [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
+> **Explanation:** The following cells can flow to the Pacific and Atlantic oceans, as shown below:
+```
+[0,4]: [0,4] -> Pacific Ocean 
+       [0,4] -> Atlantic Ocean
+[1,3]: [1,3] -> [0,3] -> Pacific Ocean 
+       [1,3] -> [1,4] -> Atlantic Ocean
+[1,4]: [1,4] -> [1,3] -> [0,3] -> Pacific Ocean 
+       [1,4] -> Atlantic Ocean
+[2,2]: [2,2] -> [1,2] -> [0,2] -> Pacific Ocean 
+       [2,2] -> [2,3] -> [2,4] -> Atlantic Ocean
+[3,0]: [3,0] -> Pacific Ocean 
+       [3,0] -> [4,0] -> Atlantic Ocean
+[3,1]: [3,1] -> [3,0] -> Pacific Ocean 
+       [3,1] -> [4,1] -> Atlantic Ocean
+[4,0]: [4,0] -> Pacific Ocean 
+       [4,0] -> Atlantic Ocean
+```
+> Note that there are other possible paths for these cells to flow to the Pacific and Atlantic oceans.
+> 
+> **Example 2:**
+> 
+> **Input:** heights = [[1]]
+> **Output:** [[0,0]]
+> **Explanation:** The water can flow from the only cell to the Pacific and Atlantic oceans.
+> 
+> **Constraints:**
+> 
+> - `m == heights.length`
+> - `n == heights[r].length`
+> - `1 <= m, n <= 200`
+> - `0 <= heights[r][c] <= 105`
+
+DFS from Both Oceans
+
+The naive approach would be to check every cell - that is, iterate through every cell, and at each one, start a traversal that follows the problem's conditions. That is, find every cell that manages to reach both oceans.
+
+This approach, however, is extremely slow, as it repeats a ton of computation. Instead of looking for every path from cell to ocean, let's start at the oceans and try to work our way to the cells. This will be much faster because when we start a traversal at a cell, whatever result we end up with can be applied to only that cell. However, when we start from the ocean and work backwards, we already know that every cell we visit must be connected to the ocean.
+
+If we start traversing from the ocean and flip the condition (check for higher height instead of lower height), then we know that every cell we visit during the traversal can flow into that ocean. 
+
+Let's start a traversal from every cell that is immediately beside the Pacific ocean, and figure out what cells can flow into the Pacific. Then, let's do the exact same thing with the Atlantic ocean. At the end, the cells that end up connected to both oceans will be our answer.
+
+```python
+class Solution:
+  def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+    """
+    O(mn), O(mn)
+    """
+    
+    if not heights:
+        return []
+    
+    m, n = len(heights), len(heights[0])
+    
+    directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]
+    
+    pacific_reachable, atlantic_reachable = set(), set()
+    
+    def dfs(x, y, reachable):
+      reachable.add((x, y))
+      for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < m and 0 <= ny < n and (nx, ny) not in reachable and heights[nx][ny] >= heights[x][y]:
+          dfs(nx, ny, reachable)
+    
+    # Perform DFS from Pacific Ocean (top and left edges)
+    for i in range(m):
+      dfs(i, 0, pacific_reachable)  # Left edge
+    for j in range(n):
+      dfs(0, j, pacific_reachable)  # Top edge
+    
+    # Perform DFS from Atlantic Ocean (bottom and right edges)
+    for i in range(m):
+      dfs(i, n - 1, atlantic_reachable)  # Right edge
+    for j in range(n):
+      dfs(m - 1, j, atlantic_reachable)  # Bottom edge
+    
+    return list(pacific_reachable.intersection(atlantic_reachable))
+```
+
 31. [Number of Islands](https://leetcode.com/problems/number-of-islands/)
+
+> Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s (water), return _the number of islands_.
+> 
+> An **island** is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+> 
+> **Example 1:**
+> 
+> **Input:** grid = [
+>   ["1","1","1","1","0"],
+>   ["1","1","0","1","0"],
+>   ["1","1","0","0","0"],
+>   ["0","0","0","0","0"]
+> ]
+> **Output:** 1
+> 
+> **Example 2:**
+> 
+> **Input:** grid = [
+>   ["1","1","0","0","0"],
+>   ["1","1","0","0","0"],
+>   ["0","0","1","0","0"],
+>   ["0","0","0","1","1"]
+> ]
+> **Output:** 3
+> 
+> **Constraints:**
+> 
+> - `m == grid.length`
+> - `n == grid[i].length`
+> - `1 <= m, n <= 300`
+> - `grid[i][j]` is `'0'` or `'1'`. 
+
+Go through each cell in the grid. When we encounter an unvisited `1`, we increment the island count and trigger a DFS/BFS to explore the entire island, marking all connected land (`1`s) as visited (changing them to `0` or by maintaining a visited set).
+
+```python
+class Solution:
+  def numIslands(self, grid: List[List[str]]) -> int:
+    """
+    O(mn), O(mn)
+    """
+    
+    m, n = len(grid), len(grid[0])
+    directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]
+    visited = set()
+    
+    def dfs(x, y):
+      visited.add((x, y))
+      for a, b in directions:
+        nx, ny = x + a, y + b
+        if 0 <= nx < m and 0 <= ny < n and (nx, ny) not in visited and grid[nx][ny] == "1":
+            dfs(nx, ny)
+    
+    islands = 0
+    for x in range(m):
+      for y in range(n):
+        if (x, y) not in visited and grid[x][y] == "1":
+          dfs(x, y)
+          islands += 1
+    
+    return islands
+```
+
 32. [Alien Dictionary](https://leetcode.com/problems/alien-dictionary/)
 33. [Graph Valid Tree](https://leetcode.com/problems/graph-valid-tree/)
 34. [Number of Connected Components in an Undirected Graph](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/)
