@@ -2475,19 +2475,16 @@ class Solution:
 > Example 1:
 > 
 > Input: words = ["wrt", "wrf","er","ett","rftt"]
-> 
 > Output: "wertf"
 > 
 > Example 2:
 > 
 > Input: words = ["z", "x"]
-> 
 > Output: "zx"
 > 
 > Example 3:
 > 
 > Input: words = ["z", "x", "z"]
-> 
 > Output: ""
 > 
 > Explanation: The order is invalid, so return "".
@@ -2579,13 +2576,11 @@ class Solution:
 > Example 1:
 > 
 > Input: n = 5, edges = [ [0,1], [0,2], [0,3], [1,4]]
-> 
 > Output: true
 > 
 > Example 2:
 > 
 > Input: n = 5, edges = [[0,1], [1,2], [2,3], [1,3], [1,4]]
-> 
 > Output: false
 > 
 > Constraints:
@@ -2735,6 +2730,113 @@ class Solution:
 ```
 
 34. [Number of Connected Components in an Undirected Graph](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/)
+
+> You have a graph of n nodes. You are given an integer n and an array edges where `edges[i] = [ai, bi]` indicates that there is an edge between `ai` and `bi` in the graph.
+> 
+> Return the number of connected components in the graph.
+> 
+> Example 1:
+> 
+> Input: n = 5, edges = [ [0,1], [1,2], [3,4]]
+> Output: 2
+> 
+> Example 2:
+> 
+> Input: n = 5, edges = [[0,1], [1,2], [2,3], [3,4]]
+> Output: 1
+> 
+> Constraints:
+> 
+> - ﻿﻿`1 <= n <= 2000`
+> - ﻿﻿`1 < edges. length <= 5000`
+> - `﻿edges[i]. length = 2`
+> - `0 < ai = bi <n`
+> - `ai != bi`
+> - ﻿﻿There are no repeated edges.
+
+Union Find
+
+Initially we'll have `n` components (disjoint nodes). For each successful union, we reduce that count by 1.
+
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.root = [i for i in range(size)]
+        self.rank = [1] * size
+    
+    def find(self, x):
+        if self.root[x] != x:
+            self.root[x] = self.find(self.root[x]) # Path compression
+        
+        return self.root[x]
+    
+    def union(self, x, y):
+        rootX, rootY = self.find(x), self.find(y)
+        if rootX == rootY:
+            return False
+        
+        # Union by rank
+        if self.rank[rootX] == self.rank[rootY]:
+            self.root[rootY] = self.root[rootX]
+            self.rank[rootX] += 1
+        elif self.rank[rootX] > self.rank[rootY]:
+            self.root[rootY] = self.root[rootX]
+        else:
+            self.root[rootX] = self.root[rootY]
+            
+        return True
+    
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+
+
+class Solution:
+    def countComponents(self, n: int, edges: List[List[int]]) -> int:
+        """
+        O(N + E.α(n)): O(N) to initialise the DSU arrays + iterating over edges, inverse Ackermann function O(α(n)) for each operation
+
+        O(N)
+        """
+        
+        u = UnionFind(n)
+        for A, B in edges:
+            if u.union(A, B):
+                n -= 1
+        
+        return n
+```
+
+DFS
+
+For each unvisited node, initiate a DFS. Each DFS initiation corresponds to discovering a new connected component.
+
+```python
+class Solution:
+    def countComponents(self, n: int, edges: List[List[int]]) -> int:
+        """
+        O(N+E), O(N+E)
+        """
+        
+        adj_list = [[] for _ in range(n)]
+        for A, B in edges:
+            adj_list[A].append(B)
+            adj_list[B].append(A)
+        
+        visited = set()
+        def dfs(node):
+            visited.add(node)
+            for neighbour in adj_list[node]:
+                if neighbour not in visited:
+                    dfs(neighbour)
+        
+        count = 0
+        for i in range(n):
+            if i not in visited:
+                dfs(i)
+                count += 1
+        
+        return count
+```
 
 ---
 
