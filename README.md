@@ -2465,7 +2465,275 @@ class Solution:
 ```
 
 32. [Alien Dictionary](https://leetcode.com/problems/alien-dictionary/)
+
+> There is a new alien language that uses the English alphabet. However, the order among the letters is unknown to you.
+> 
+> You are given a list of strings words from the alien language's dictionary, where the strings in words are sorted lexicographically by the rules of this new language.
+> 
+> Return a string of the unique letters in the new alien language sorted in lexicographically increasing order by the new language's rules. If there is no solution, return "". If there are multiple solutions, return any of them.
+> 
+> Example 1:
+> 
+> Input: words = ["wrt", "wrf","er","ett","rftt"]
+> 
+> Output: "wertf"
+> 
+> Example 2:
+> 
+> Input: words = ["z", "x"]
+> 
+> Output: "zx"
+> 
+> Example 3:
+> 
+> Input: words = ["z", "x", "z"]
+> 
+> Output: ""
+> 
+> Explanation: The order is invalid, so return "".
+> 
+> Constraints:
+> 
+> - ﻿﻿`1 < words.length <= 100`
+> - `﻿﻿1 < words[i].length <= 100`
+> - ﻿﻿`words[i]` consists of only lowercase English letters
+
+Graph Representation
+- Represent the characters and their order as a directed graph where each character is a node.
+- Directed edges between characters will indicate which character comes before another.
+
+Building the Graph
+- Compare each pair of adjacent words in the list to determine the order of characters.
+- Create edges based on the first differing characters between words.
+`
+```
+input = wxqkj whag cckgh cdxg cdxdt cdht ktgxt ktgch ktdw ktdc jqw jmc jmg
+
+word1:      wxqkj whag  cckgh cdxg  cdxdt cdht  ktgxt ktgch ktdw ktdc jqw  jmc
+word2:      whag  cckgh cdxg  cdxdt cdht  ktgxt ktgch ktdw  ktdc jqw  jmc  jmg
+dependency: x->h  w->c  c->d  c->g  x->h  c->k  x->c  g->d  w->c k->j q->m c->g
+```
+ 
+Topological Sort
+- Use Kahn’s algorithm (BFS) or Depth-First Search (DFS) to perform a topological sort on the graph. This will help detect cycles and find a valid ordering of characters.
+
+```python
+from collections import defaultdict, deque
+
+class Solution:
+    def alienOrder(self, words: List[str]) -> str:
+        """
+        O(V + E), O(V + E)
+        """
+        
+        adj = defaultdict(set)
+        indegree = {char: 0 for word in words for char in word} 
+        
+        # indegree = defaultdict(int) won't work, as we need to account for all characters
+        # during queue construction, when we check indegree[x] == 0, x needs to be present in the indegree to be accounted for
+        
+        for word1, word2 in zip(words, words[1:]):
+          # prefix edge case needs to be handled explicitly
+            # if second word is prefix of the first, ex. [abcd, abc] -> return
+            if word1.startswith(word2) and len(word1) > len(word2):
+                return ""
+                
+            for char1, char2 in zip(word1, word2):
+                if char1 != char2:
+                    if char2 not in adj[char1]: # if not checked, we'll keep increasing the indegree for the same char again and again
+                        adj[char1].add(char2)
+                        indegree[char2] += 1
+                    break
+            
+            # checking prefix post-loop will result in TLE
+            # else:
+            #     if len(word1) > len(word2):
+            #         return ""
+        
+        
+        queue = deque(char for char in indegree if indegree[char] == 0)
+        
+        order = []
+        while queue:
+            char = queue.popleft()
+            order.append(char)
+            
+            for neighbour in adj[char]:
+                indegree[neighbour] -= 1
+                if indegree[neighbour] == 0:
+                    queue.append(neighbour)
+                    
+        # no valid order, cycle
+        if len(order) < len(indegree):
+            return ""
+        
+        return "".join(order)
+```
+
 33. [Graph Valid Tree](https://leetcode.com/problems/graph-valid-tree/)
+
+> You have a graph of n nodes labeled from `0` to `n - 1`. You are given an integer `n` and a list of edges where `edges[i] = [ai, bi]` indicates that there is an undirected edge between nodes `ai` and `bi` in the graph.
+> 
+> Return `true` if the edges of the given graph make up a valid tree, and false otherwise.
+> 
+> Example 1:
+> 
+> Input: n = 5, edges = [ [0,1], [0,2], [0,3], [1,4]]
+> 
+> Output: true
+> 
+> Example 2:
+> 
+> Input: n = 5, edges = [[0,1], [1,2], [2,3], [1,3], [1,4]]
+> 
+> Output: false
+> 
+> Constraints:
+> 
+> - ﻿﻿`1 < n <= 2000`
+> - `﻿﻿0 < edges. length <= 5000`
+> - ﻿﻿`edges[i]. length = 2`
+> - ﻿﻿`0 <= ai, bi < n`
+> - ﻿﻿`ai != bi`
+> - ﻿﻿There are no self-loops or repeated edges.
+
+G is a tree iff:
+1. G is fully connected, i.e., for every pair of nodes in G, there is a path between them.
+2. G contains no cycles, i.e., there is exactly one path between each pair of nodes in G.
+
+For a graph to be a valid tree, it must have exactly n-1 edges. Any less, it can't be fully connected. Any more, it has to contain cycles. Additionally, if it is fully connected and contains exactly n-1 edges, it can't possibly contain a cycle, and therefore must be a tree.
+
+Thus, the algorithm:
+1. Check whether or not there are n-1 edges. If not, then return False.
+2. Check whether or not the graph is fully connected. Return True if it is, false if otherwise.
+
+```python
+from collections import defaultdict
+
+class Solution:
+    def validTree(self, n: int, edges: List[List[int]]) -> bool:
+        """
+        O(N), O(N)
+        """
+        
+        if len(edges) != n-1:
+            return False
+        
+        adj = defaultdict(set)
+        for a, b in edges:
+            adj[a].add(b)
+            adj[b].add(a)
+        
+        
+        visited = set()
+        def dfs(node):
+            visited.add(node)
+            for neighbour in adj[node]:
+                if neighbour not in visited:
+                    dfs(neighbour)
+        
+        dfs(0)
+        
+        return len(visited) == n
+```
+
+Union Find
+
+Same as before:
+1. Fully connected: exactly n-1 edges.
+2. No cycles: Each time there is no merge in our disjoint set DS, it's because we're adding an edge between 2 nodes that's already connected via path, indicating a cycle.
+
+```
+Ex 1: n = 6, edges = [(0, 5), (4, 0), (1, 2), (4, 5), (3, 2)]
+
+{0} {1} {2} {3} {4} {5}
+
+edge (0, 5) -> {0,5} {1} {2} {3} {4}
+
+edge (4, 0) -> {0,5,4} {1} {2} {3}
+
+edge (1, 2) -> {0,5,4} {1,2} {3}
+
+edge (4, 5) -> {0,5,4} {1,2} {3}
+
+edge (3, 2) -> {0,5,4} {1,2,3}
+
+Edges are not in a single connected component, there must be a cycle.
+
+
+Ex 2: n = 6, edges = [(0, 2), (4, 1), (2, 3), (3, 5), (1, 3)]  
+
+{0} {1} {2} {3} {4} {5}
+
+edge (0, 2) -> {0,2} {1} {3} {4} {5}
+
+edge (4, 1) -> {0,2} {1,4} {3} {5}
+
+edge (1, 2) -> {0,1,2,4} {3} {5}
+
+edge (4, 5) -> {0,1,2,4,5} {3}
+
+edge (3, 2) -> {0,1,2,3,4,5}
+
+Edges are not in a single connected component, no cycle.
+```
+
+Complexity analysis ignores constants, sometimes they are still having a big impact on the run-time in practise.
+
+The previous approach has a lot of overhead in needing to create an adjacent list with the edges before it could even begin the DFS. This is all treated as a constant, as it ultimately has the same time complexity as DFS.
+
+This approach doesn't need to change the input format, it can just get straight to determining whether or not there is a cycle. Additionally, the bit that stops it being constant, α(N), will never have a value larger than 4. So in practise, it behaves as a constant too - and a far smaller one at that.
+
+```python
+class UnionFind:
+    def __init__(self, size):
+        self.root = [i for i in range(size)]
+        self.rank = [1] * size
+    
+    def find(self, x):
+        if self.root[x] != x:
+            self.root[x] = self.find(self.root[x]) # Path compression
+        
+        return self.root[x]
+    
+    def union(self, x, y):
+        rootX, rootY = self.find(x), self.find(y)
+        if rootX == rootY:
+            return False
+        
+        # Union by rank
+        if self.rank[rootX] == self.rank[rootY]:
+            self.root[rootY] = self.root[rootX]
+            self.rank[rootX] += 1
+        elif self.rank[rootX] > self.rank[rootY]:
+            self.root[rootY] = self.root[rootX]
+        else:
+            self.root[rootX] = self.root[rootY]
+            
+        return True
+    
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+
+
+class Solution:
+    def validTree(self, n: int, edges: List[List[int]]) -> bool:
+        """
+        O(E⋅α(N)) = O(N⋅α(N))
+        O(N)
+        """
+        
+        if len(edges) != n-1:
+            return False
+        
+        u = UnionFind(n)
+        for a, b in edges:
+            if not u.union(a, b):
+                return False # Cycle detected
+        
+        return True
+```
+
 34. [Number of Connected Components in an Undirected Graph](https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/)
 
 ---
