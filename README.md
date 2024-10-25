@@ -2843,10 +2843,343 @@ class Solution:
 ## Interval
 
 35. [Insert Interval](https://leetcode.com/problems/insert-interval/)
+
+> You are given an array of non-overlapping intervals `intervals` where `intervals[i] = [starti, endi]` represent the start and the end of the `ith` interval and `intervals` is sorted in ascending order by `starti`. You are also given an interval `newInterval = [start, end]` that represents the start and end of another interval.
+> 
+> Insert `newInterval` into `intervals` such that `intervals` is still sorted in ascending order by `starti` and `intervals` still does not have any overlapping intervals (merge overlapping intervals if necessary).
+> 
+> Return `intervals` _after the insertion_.
+> 
+> **Note** that you don't need to modify `intervals` in-place. You can make a new array and return it.
+> 
+> **Example 1:**
+> 
+> **Input:** intervals = [[1,3],[6,9]], newInterval = [2,5]
+> **Output:** [[1,5],[6,9]]
+> 
+> **Example 2:**
+> 
+> **Input:** intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+> **Output:** [[1,2],[3,10],[12,16]]
+> **Explanation:** Because the new interval [4,8] overlaps with [3,5],[6,7],[8,10].
+> 
+> **Constraints:**
+> 
+> - `0 <= intervals.length <= 104`
+> - `intervals[i].length == 2`
+> - `0 <= starti <= endi <= 105`
+> - `intervals` is sorted by `starti` in **ascending** order.
+> - `newInterval.length == 2`
+> - `0 <= start <= end <= 105`
+
+Linear Search
+
+Non-overlapping Cases
+- New interval starts after the current interval ends: add the current interval to `newIntervals`.
+- Current interval starts after the new interval ends: add the new interval to the list, update `newInterval` to the current interval.
+
+Overlapping cases: merge by taking min and max of the 2 ranges.
+
+```python
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        """
+        O(N), O(N)
+        """
+        
+        newIntervals = []
+        for interval in intervals:
+            a, b = interval
+            c, d = newInterval
+            if c > b:  # New interval is after the current interval
+                newIntervals.append(interval)
+            elif a > d:  # Current interval is after the new interval
+                newIntervals.append(newInterval)
+                newInterval = interval
+            else:  # Overlapping intervals
+                newInterval = [min(a, c), max(b, d)]
+
+        newIntervals.append(newInterval)  # Append the last merged interval
+        
+        return newIntervals
+```
+
+Binary Search
+
+The use of binary search can potentially reduce the number of comparisons.
+
+1. Find Insertion Point: Use binary search to determine the position where the new interval can be inserted in the sorted list of existing intervals.
+2. Prepare Result List: Create a new list to hold the result. Include all intervals that come before the insertion point.
+3. Merge New Interval: Check if the last interval in the result list overlaps with the new interval:
+    - If it overlaps, merge them by updating the end of the last interval.
+    - If it does not overlap, simply add the new interval to the result list.
+4. Process Remaining Intervals: Iterate through the remaining intervals (those after the insertion point):
+    - If the last interval in the result list overlaps with the current interval, merge them.
+    - If there is no overlap, add the current interval to the result list.
+
+```python
+import bisect
+
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        """
+        O(N), O(N)
+        """
+        
+        # Step 1: Find the index to insert the new interval
+        idx = bisect.bisect_left(intervals, newInterval)
+        
+        # Step 2: Prepare the result list with intervals before the new interval
+        newIntervals = intervals[:idx]
+        
+        # Step 3: Add and merge the new interval
+        if newIntervals and newIntervals[-1][1] >= newInterval[0]:
+            # Merge with the last interval in newIntervals if it overlaps
+            newIntervals[-1][1] = max(newIntervals[-1][1], newInterval[1])
+        else:
+            newIntervals.append(newInterval)
+        
+        # Step 4: Add all remaining intervals
+        for i in range(idx, len(intervals)):
+            if newIntervals[-1][1] >= intervals[i][0]:  # Overlapping case
+                newIntervals[-1][1] = max(newIntervals[-1][1], intervals[i][1])
+            else:
+                newIntervals.append(intervals[i])
+        
+        return newIntervals
+```
+
 36. [Merge Intervals](https://leetcode.com/problems/merge-intervals/)
+
+> Given an array of `intervals` where `intervals[i] = [starti, endi]`, merge all overlapping intervals, and return _an array of the non-overlapping intervals that cover all the intervals in the input_.
+> 
+> **Example 1:**
+> 
+> **Input:** intervals = [[1,3],[2,6],[8,10],[15,18]]
+> **Output:** [[1,6],[8,10],[15,18]]
+> **Explanation:** Since intervals [1,3] and [2,6] overlap, merge them into [1,6].
+> 
+> **Example 2:**
+> 
+> **Input:** intervals = [[1,4],[4,5]]
+> **Output:** [[1,5]]
+> **Explanation:** Intervals [1,4] and [4,5] are considered overlapping.
+> 
+> **Constraints:**
+> 
+> - `1 <= intervals.length <= 104`
+> - `intervals[i].length == 2`
+> - `0 <= starti <= endi <= 104`
+
+Sorting + Merging
+
+```python
+from typing import List
+
+class Solution:
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        """
+        O(NlogN)
+        O(N): sort O(N), merged O(N)
+        """
+        
+        # Sort intervals by their starting points
+        intervals.sort(key=lambda x: x[0])
+        
+        merged = []
+        for interval in intervals:
+            if not merged: # First interval, just add it and skip to next
+                merged.append(interval)
+                continue
+            
+            prev_left, prev_right = merged[-1]
+            curr_left, curr_right = interval
+            
+            # Check for overlap
+            if prev_right >= curr_left:
+                # Merge by updating the last interval
+                merged[-1][1] = max(prev_right, curr_right)
+            else:
+                merged.append(interval)  # No overlap, add current interval
+        
+        return merged
+```
+
 37. [Non-overlapping Intervals](https://leetcode.com/problems/non-overlapping-intervals/)
+
+> Given an array of intervals `intervals` where `intervals[i] = [starti, endi]`, return _the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping_.
+> 
+> **Note** that intervals which only touch at a point are **non-overlapping**. For example, `[1, 2]`and `[2, 3]` are non-overlapping.
+> 
+> **Example 1:**
+> 
+> **Input:** intervals = [[1,2],[2,3],[3,4],[1,3]]
+> **Output:** 1
+> **Explanation:** [1,3] can be removed and the rest of the intervals are non-overlapping.
+> 
+> **Example 2:**
+> 
+> **Input:** intervals = [[1,2],[1,2],[1,2]]
+> **Output:** 2
+> **Explanation:** You need to remove two [1,2] to make the rest of the intervals non-overlapping.
+> 
+> **Example 3:**
+> 
+> **Input:** intervals = [[1,2],[2,3]]
+> **Output:** 0
+> **Explanation:** You don't need to remove any of the intervals since they're already non-overlapping.
+> 
+> **Constraints:**
+> 
+> - `1 <= intervals.length <= 105`
+> - `intervals[i].length == 2`
+> - `-5 * 104 <= starti < endi <= 5 * 104`
+
+Sorting based on starting times + Greedy selection
+
+In case of an overlap, we keep the one with the earlier end time and discard the other, as it'll lead to more space to accommodate more intervals later on.
+
+```python
+class Solution:
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        """
+        O(NlogN)
+        O(N): sort O(N)
+        """
+        
+        # Sort the intervals by their end times
+        intervals.sort(key=lambda x: x[0])
+        
+        count = 0
+        prev_end = float('-inf')
+        
+        for interval in intervals:
+            if prev_end > interval[0]:
+                count += 1  # Increment count for overlapping interval
+                # Update prev_end to the minimum end time of the overlapping intervals
+                prev_end = min(prev_end, interval[1])
+            else:
+                prev_end = interval[1]  # Update the prev end time to the current interval's end
+        
+        return count
+```
+
+Sorting based on end times + Greedy selection
+
+This is a more common greedy strategy, as it helps in selecting the interval that finishes the earliest, maximising the chance to accommodate subsequent intervals.
+
+If an overlap occurs, we always drop the current interval, as that decision will lead to more space to accommodate more intervals.
+
+```python
+class Solution:
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        """
+        O(NlogN)
+        O(N): sort O(N)
+        """
+        
+        # Sort the intervals by their end times
+        intervals.sort(key=lambda x: x[1])
+        
+        count = 0
+        prev_end = float('-inf')
+        
+        for interval in intervals:
+            if prev_end > interval[0]:
+                count += 1  # Increment count for overlapping interval
+            else:
+                prev_end = interval[1]  # Update the prev end time to the current interval's end
+        
+        return count
+```
+
 38. [Meeting Rooms](https://leetcode.com/problems/meeting-rooms/)
+
+> Given an array of meeting time intervals where intervals[i] = [starti, endi], determine if a person could attend all meetings.
+> 
+> Example 1:
+> 
+> Input: intervals = [ [0,30], [5,10], [15,20]]
+> Output: false
+> 
+> Example 2:
+> 
+> Input: intervals = [[7,10], [2,4]]
+> Output: true
+> 
+> Constraints:
+> 
+> - ﻿﻿0 <= intervals. length <= 10^4
+> - ﻿﻿intervals [i].length = 2
+> - ﻿﻿0 < starti < endi == 10^6
+
+Sorting + checking for overlaps
+
+```python
+class Solution:
+    def canAttendMeetings(self, intervals: List[List[int]]) -> bool:
+        """
+        O(NlogN), O(N)
+        """
+        
+        intervals.sort()
+        
+        for prev, curr in zip(intervals, intervals[1:]):
+            if prev[1] > curr[0]: # if prev ends before the next one starts
+                return False
+        
+        return True
+```
+
 39. [Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)
+
+> Given an array of meeting time intervals intervals where intervals[i] = [starti, endi], return the minimum number of conference rooms required.
+> 
+> Example 1:
+> 
+> Input: intervals = [[0,30], [5,10], [15,20]]
+> Output: 2
+> 
+> Example 2:
+> 
+> Input: intervals = [ [7,10], [2,4]]
+> Output: 1
+> 
+> Constraints:
+> 
+> - ﻿﻿1 < intervals. length <= 10^4
+> - ﻿﻿0 < starti < endi <= 10^6
+
+A meeting is defined by its start and end times. However, for this specific algorithm, we need to treat the start and end times individually. When we encounter an ending event, that means that some meeting that started earlier has ended now. We are not really concerned with which meeting has ended, all we need is that some meeting ended thus making a room available.
+
+When a meeting starts before the last one ends (`start < ends[end_pointer]`), it indicates that a new room is needed. Thus, we increment `room_count`.
+
+Else, it means that the current meeting can reuse a room that is now free. There’s no need to adjust (decrease) `room_count` because we are not currently holding onto that room; we are just checking for overlapping.
+
+```python
+class Solution:
+    def minMeetingRooms(self, intervals: List[List[int]]) -> int:
+        """
+        O(NlogN), O(N)
+        """
+        
+        # Separate start and end times
+        starts = sorted([i[0] for i in intervals])  # Start times
+        ends = sorted([i[1] for i in intervals])    # End times
+        
+        room_count = 0
+        end_pointer = 0
+        
+        for start in starts:
+            # If a meeting starts before the last one ends, we need a new room
+            if start < ends[end_pointer]:
+                room_count += 1
+            else:
+                # Reuse the room: move the end pointer to the next meeting
+                end_pointer += 1
+        
+        return room_count  # Return the minimum number of rooms required
+```
 
 ---
 
