@@ -3185,12 +3185,508 @@ class Solution:
 
 ## Linked List
 
-40. [Reverse a Linked List](https://leetcode.com/problems/reverse-linked-list/)
-41. [Detect Cycle in a Linked List](https://leetcode.com/problems/linked-list-cycle/)
+40. [Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/)
+
+> Given the `head` of a singly linked list, reverse the list, and return _the reversed list_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/02/19/rev1ex1.jpg)
+> 
+> **Input:** head = [1,2,3,4,5]
+> **Output:** [5,4,3,2,1]
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/02/19/rev1ex2.jpg)
+> 
+> **Input:** head = [1,2]
+> **Output:** [2,1]
+> 
+> **Example 3:**
+> 
+> **Input:** head = []
+> **Output:** []
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the list is the range `[0, 5000]`.
+> - `-5000 <= Node.val <= 5000`
+> 
+> **Follow up:** A linked list can be reversed either iteratively or recursively. Could you implement both?
+
+Iterative
+
+We can reverse a linked list by iteratively changing the direction of the pointers. For each node, reverse the pointer to point to the previous node, move to the next node and repeat until all nodes are processed.
+
+```python
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        """
+        O(N), O(1)
+        """
+        
+        prev = None  # Initialize the previous pointer
+        
+        # Iterate through the linked list
+        while head:
+            next_node = head.next  # Store the next node
+            head.next = prev  # Reverse the link
+            prev, head = head, next_node  # Move prev to current, current to next node
+            
+        return prev  # Return the new head of the reversed list
+```
+
+Recursive
+
+Recursive Call: The function calls itself with the next node (`head.next`) to process the rest of the list.
+
+Rearranging Pointers: After the recursive call, the `next` pointer of the next node is updated to point back to the current node (`head`), and the current node's `next` pointer is set to `None`.
+
+```python
+head.next.next = head  # Make the next node point to the current 
+head head.next = None  # Set current head's next to None
+```
+
+`head` refers to the current node in the recursion. `head.next` refers to the next node in the original order of the list.
+
+- `head.next.next = head`:
+    - This line is executed after the recursive call has returned.
+    - The recursive call has already reversed the rest of the list starting from `head.next`.
+    - By accessing `head.next.next`, we are effectively reaching the node that was originally right after `head`.
+    - This means we are telling that node (the one after `head`) to point back to `head`, reversing the link between these two nodes.
+    - For example, if the list was originally `1 -> 2 -> 3`, and we are currently at node `2`, after the recursive call, `head.next` (which is `3`) will have its `next` pointer set to point back to `2`.
+- `head.next = None`:
+    - This line is crucial for preventing cycles in the linked list.
+    - Since `head.next` originally pointed to the next node in the list, setting it to `None` indicates that `head` is now the last node in the reversed list.
+    - In our example, when we're at node `2`, after pointing `3` to `2`, we set `2.next` to `None` to indicate that `2` is the last node in the new reversed list.
+
+```python
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        """
+        O(N)
+        O(N): stack
+        """
+        
+        # Base case: if head is None or only one node
+        if not head or not head.next:
+            return head
+        
+        # Recursive case: reverse the rest of the list
+        new_head = self.reverseList(head.next)
+        
+        # Rearranging pointers
+        head.next.next = head  # Make the next node point to the current head
+        head.next = None  # Set current head's next to None
+        
+        return new_head  # Return the new head of the reversed list
+```
+
+41. [Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/)
+
+> Given `head`, the head of a linked list, determine if the linked list has a cycle in it.
+> 
+> There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the `next` pointer. Internally, `pos` is used to denote the index of the node that tail's `next` pointer is connected to. **Note that `pos` is not passed as a parameter**.
+> 
+> Return `true` _if there is a cycle in the linked list_. Otherwise, return `false`.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist.png)
+> 
+> **Input:** head = [3,2,0,-4], pos = 1
+> **Output:** true
+> **Explanation:** There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist_test2.png)
+> 
+> **Input:** head = [1,2], pos = 0
+> **Output:** true
+> **Explanation:** There is a cycle in the linked list, where the tail connects to the 0th node.
+> 
+> **Example 3:**
+> 
+> ![](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist_test3.png)
+> 
+> **Input:** head = [1], pos = -1
+> **Output:** false
+> **Explanation:** There is no cycle in the linked list.
+> 
+> **Constraints:**
+> 
+> - The number of the nodes in the list is in the range `[0, 104]`.
+> - `-105 <= Node.val <= 105`
+> - `pos` is `-1` or a **valid index** in the linked-list.
+> 
+> **Follow up:** Can you solve it using `O(1)` (i.e. constant) memory?
+
+The most efficient way to detect a cycle in a linked list is to use the Floyd's Tortoise and Hare algorithm, which involves using two pointers that move at different speeds.
+
+If there's no cycle in the list, the fast pointer will eventually reach the end and return false.
+
+```python
+class Solution:
+    def hasCycle(self, head: Optional[ListNode]) -> bool:
+        """
+        O(N), O(1)
+        """
+        
+        slow = fast = head
+        while fast and fast.next:
+            slow, fast = slow.next, fast.next.next
+            if slow == fast:
+                return True
+        
+        return False
+```
+
 42. [Merge Two Sorted Lists](https://leetcode.com/problems/merge-two-sorted-lists/)
+
+> You are given the heads of two sorted linked lists `list1` and `list2`.
+> 
+> Merge the two lists into one **sorted** list. The list should be made by splicing together the nodes of the first two lists.
+> 
+> Return _the head of the merged linked list_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/10/03/merge_ex1.jpg)
+> 
+> **Input:** list1 = [1,2,4], list2 = [1,3,4]
+> **Output:** [1,1,2,3,4,4]
+> 
+> **Example 2:**
+> 
+> **Input:** list1 = [], list2 = []
+> **Output:** []
+> 
+> **Example 3:**
+> 
+> **Input:** list1 = [], list2 = [0]
+> **Output:** [0]
+> 
+> **Constraints:**
+> 
+> - The number of nodes in both lists is in the range `[0, 50]`.
+> - `-100 <= Node.val <= 100`
+> - Both `list1` and `list2` are sorted in **non-decreasing** order.
+
+We merge the two lists by comparing the values of the nodes one by one and building a new sorted linked list.
+
+```python
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        """
+        O(N + M), O(1)
+        """
+        
+        # Early exits
+        if not list1:
+            return list2
+        if not list2:
+            return list1
+        
+        dummy = head = ListNode()  # sentinel head
+        
+        while list1 and list2:
+            if list1.val < list2.val:
+                head.next = list1
+                list1 = list1.next
+            else:
+                head.next = list2
+                list2 = list2.next
+            head = head.next
+        
+        # Attach any remaining nodes
+        head.next = list1 if list1 else list2
+        
+        # Return the merged list, starting from the node after dummy
+        return dummy.next
+```
+
 43. [Merge K Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/)
+
+> You are given an array of `k` linked-lists `lists`, each linked-list is sorted in ascending order.
+> 
+> _Merge all the linked-lists into one sorted linked-list and return it._
+> 
+> **Example 1:**
+> 
+> **Input:** lists = [[1,4,5],[1,3,4],[2,6]]
+> **Output:** [1,1,2,3,4,4,5,6]
+> **Explanation:** The linked-lists are:
+> [
+>   1->4->5,
+>   1->3->4,
+>   2->6
+> ]
+> merging them into one sorted list:
+> 1->1->2->3->4->4->5->6
+> 
+> **Example 2:**
+> 
+> **Input:** lists = []
+> **Output:** []
+> 
+> **Example 3:**
+> 
+> **Input:** lists = [[]]
+> **Output:** []
+> 
+> **Constraints:**
+> 
+> - `k == lists.length`
+> - `0 <= k <= 104`
+> - `0 <= lists[i].length <= 500`
+> - `-104 <= lists[i][j] <= 104`
+> - `lists[i]` is sorted in **ascending order**.
+> - The sum of `lists[i].length` will not exceed `104`.
+
+Merge with Divide and Conquer
+
+```
+[ L1, L2, L3, L4, L5, L6, L7, L8 ]
+
+[ L1, L2, L3, L4 ]   [ L5, L6, L7, L8 ]
+
+[ L1, L2 ]   [ L3, L4 ]   [ L5, L6 ]   [ L7, L8 ]
+
+[ L1 ]   [ L2 ]   [ L3 ]   [ L4 ]   [ L5 ]   [ L6 ]   [ L7 ]   [ L8 ]
+```
+
+```
+merge(L1, L2) -> M1
+merge(L3, L4) -> M2
+merge(L5, L6) -> M3
+merge(L7, L8) -> M4
+
+merge(M1, M2) -> M5
+merge(M3, M4) -> M6
+
+merge(M5, M6) -> Final Merged List
+```
+
+```python
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        # Early exits
+        if not list1:
+            return list2
+        if not list2:
+            return list1
+        
+        dummy = head = ListNode()  # sentinel head
+        
+        while list1 and list2:
+            if list1.val < list2.val:
+                head.next = list1
+                list1 = list1.next
+            else:
+                head.next = list2
+                list2 = list2.next
+            head = head.next
+        
+        # Attach any remaining nodes
+        head.next = list1 if list1 else list2
+        
+        # Return the merge
+        return dummy.next
+    
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        """
+        k: number of linked lists
+        N: total number of nodes
+        
+        O(NlogK): Merge two sorted lists in O(N) time, logk times
+        O(logK): recursion stack
+        """
+        
+        N = len(lists)
+        
+        if N == 0:
+            return None  # No lists to merge
+        if N == 1:
+            return lists[0]  # Only one list to return
+        
+        # Divide and conquer: merge the lists in halves
+        mid = N // 2
+        left_merged = self.mergeKLists(lists[:mid])
+        right_merged = self.mergeKLists(lists[mid:])
+        
+        return self.mergeTwoLists(left_merged, right_merged)
+```
+
+Min heap
+
+We use a min-heap (or priority queue) to keep track of the smallest current nodes from each list. 
+
+Continuously extract the smallest node from the heap and add it to the merged list. After extracting a node, push the next node from the same list into the heap.
+
+This approach also runs in O(N log k) time, but it may be faster in practice for larger inputs due to fewer overall comparisons. It can efficiently manage cases where the number of lists varies significantly.
+
+It requires O(k) space for the heap, which may be higher than the recursive stack space in the divide-and-conquer approach.
+
+```python
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        """
+        k: number of linked lists
+        N: total number of nodes
+        
+        O(Nlogk): comparison cost is logk for every pop and insertion, N nodes
+        O(k): atmost k nodes in the heap
+        """
+        
+        min_heap = []
+        
+        # Push the head of each list into the heap
+        for i, node in enumerate(lists):
+            if node:  # Need to check for None node
+                heapq.heappush(min_heap, (node.val, i, node))
+        
+        dummy = head = ListNode()
+        
+        # Process the heap until it's empty
+        while min_heap:
+            val, index, node = heapq.heappop(min_heap)  # Get the smallest node
+            current.next = node  # Link it to the merged list
+            current = current.next  # Move the current pointer
+            
+            if node.next:  # If there's a next node, push it into the heap
+                heapq.heappush(min_heap, (node.next.val, index, node.next))
+        
+        # Return the merged list, starting from the node after dummy
+        return dummy.next
+```
+
 44. [Remove Nth Node From End Of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+
+> Given the `head` of a linked list, remove the `nth` node from the end of the list and return its head.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/10/03/remove_ex1.jpg)
+> 
+> **Input:** head = [1,2,3,4,5], n = 2
+> **Output:** [1,2,3,5]
+> 
+> **Example 2:**
+> 
+> **Input:** head = [1], n = 1
+> **Output:** []
+> 
+> **Example 3:**
+> 
+> **Input:** head = [1,2], n = 1
+> **Output:** [1]
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the list is `sz`.
+> - `1 <= sz <= 30`
+> - `0 <= Node.val <= 100`
+> - `1 <= n <= sz`
+> 
+> **Follow up:** Could you do this in one pass?
+
+We can use a two-pointer technique. The idea is to place one pointer `n` nodes ahead of the other. When the first pointer reaches the end of the list, the second pointer will be at the node just before the one we want to remove.
+
+```python
+class Solution:
+    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
+        """
+        O(N), O(1)
+        """
+        
+        # A dummy node is created and points to the head. This simplifies edge case handling (e.g., removing the head).
+        dummy = first = second = ListNode(0, head)
+        
+        # Advance the first pointer n+1 steps ahead
+        for _ in range(n + 1):
+            first = first.next
+        
+        # Move both pointers until the first pointer reaches the end
+        while first:
+            first = first.next
+            second = second.next
+        
+        # The second pointer will now point to the node before the one we need to remove. Adjust the pointers to remove the n-th node.
+        second.next = second.next.next
+        
+        return dummy.next
+```
+
 45. [Reorder List](https://leetcode.com/problems/reorder-list/)
+
+> You are given the head of a singly linked-list. The list can be represented as:
+> 
+> L0 → L1 → … → Ln - 1 → Ln
+> 
+> _Reorder the list to be on the following form:_
+> 
+> L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+> 
+> You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/03/04/reorder1linked-list.jpg)
+> 
+> **Input:** head = [1,2,3,4]
+> **Output:** [1,4,2,3]
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/03/09/reorder2-linked-list.jpg)
+> 
+> **Input:** head = [1,2,3,4,5]
+> **Output:** [1,5,2,4,3]
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the list is in the range `[1, 5 * 104]`.
+> - `1 <= Node.val <= 1000`
+
+To get the desired pattern:
+1. Find the Middle of the List: Use the fast and slow pointer technique to find the middle node of the linked list.
+2. Reverse the Second Half: Reverse the second half of the linked list starting from the middle node.
+3. Merge Two Halves: Merge the first half and the reversed second half together.
+
+```python
+class Solution:
+    def reorderList(self, head: Optional[ListNode]) -> None:
+        """
+        O(N), O(1)
+        """
+        
+        if not head or not head.next:
+            return
+        
+        # Step 1: Find the middle of the list
+        slow, fast = head, head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        
+        # Step 2: Reverse the second half of the list
+        prev, curr = None, slow
+        while curr:
+            next_node = curr.next
+            curr.next = prev
+            prev, curr = curr, next_node
+        
+        # Step 3: Merge the two halves
+        # Merge all nodes from the reversed second half until it is fully integrated into the first half, maintaining the required order without leaving any nodes unmerged.
+        first, second = head, prev  # second is the head of the reversed list
+        while second.next:  
+            tmp1, tmp2 = first.next, second.next
+            first.next = second
+            second.next = tmp1
+            first, second = tmp1, tmp2
+```
 
 ---
 
