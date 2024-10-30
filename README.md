@@ -3693,24 +3693,1100 @@ class Solution:
 ## Matrix
 
 46. [Set Matrix Zeroes](https://leetcode.com/problems/set-matrix-zeroes/)
+
+> Given an `m x n` integer matrix `matrix`, if an element is `0`, set its entire row and column to `0`'s.
+> 
+> You must do it [in place](https://en.wikipedia.org/wiki/In-place_algorithm).
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/08/17/mat1.jpg)
+> 
+> **Input:** matrix = [[1,1,1],[1,0,1],[1,1,1]]
+> **Output:** [[1,0,1],[0,0,0],[1,0,1]]
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/08/17/mat2.jpg)
+> 
+> **Input:** matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+> **Output:** [[0,0,0,0],[0,4,5,0],[0,3,1,0]]
+> 
+> **Constraints:**
+> 
+> - `m == matrix.length`
+> - `n == matrix[0].length`
+> - `1 <= m, n <= 200`
+> - `-231 <= matrix[i][j] <= 231 - 1`
+> 
+> **Follow up:**
+> 
+> - A straightforward solution using `O(mn)` space is probably a bad idea.
+> - A simple improvement uses `O(m + n)` space, but still not the best solution.
+> - Could you devise a constant space solution?
+
+1. Identify Rows and Columns to Zero:
+    - Use the first row and first column to keep track of which rows and columns should be zeroed.
+    - Iterate through the matrix and mark the first cell of the respective row and column if a zero is found.
+2. Zero Out Rows and Columns:
+    - Based on the markings in the first row and column, update the respective rows and columns to zero.
+3. Handle the First Row and First Column Separately:
+    - Finally, zero out the first row and/or first column if necessary.
+
+```python
+class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        O(M*N), O(1)
+        """
+        
+        if not matrix:
+            return
+        
+        rows, cols = len(matrix), len(matrix[0])
+        zero_first_row = False
+        zero_first_col = False
+        
+        # Determine if the first row and first column should be zeroed
+        for i in range(rows):
+            for j in range(cols):
+                if matrix[i][j] == 0:
+                    if i == 0:
+                        zero_first_row = True
+                    if j == 0:
+                        zero_first_col = True
+                    matrix[i][0] = 0
+                    matrix[0][j] = 0
+        
+        # Zero out the cells based on the markings
+        for i in range(1, rows):
+            for j in range(1, cols):
+                if matrix[i][0] == 0 or matrix[0][j] == 0:
+                    matrix[i][j] = 0
+        
+        # Zero out the first row and first column if needed
+        if zero_first_row:
+            for j in range(cols):
+                matrix[0][j] = 0
+        
+        if zero_first_col:
+            for i in range(rows):
+                matrix[i][0] = 0
+```
+
 47. [Spiral Matrix](https://leetcode.com/problems/spiral-matrix/)
+
+> Given an `m x n` `matrix`, return _all elements of the_ `matrix` _in spiral order_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/11/13/spiral1.jpg)
+> 
+> **Input:** matrix = [[1,2,3],[4,5,6],[7,8,9]]
+> **Output:** [1,2,3,6,9,8,7,4,5]
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/11/13/spiral.jpg)
+> 
+> **Input:** matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+> **Output:** [1,2,3,4,8,12,11,10,9,5,6,7]
+> 
+> **Constraints:**
+> 
+> - `m == matrix.length`
+> - `n == matrix[i].length`
+> - `1 <= m, n <= 10`
+> - `-100 <= matrix[i][j] <= 100`
+
+The outer while loop runs as long as there are rows and columns left to traverse.
+
+The for loops handle the traversal in the respective directions, updating the result list and the boundaries after each complete traversal.
+
+Conditions to Avoid Redundant Traversal: Before traversing the bottom row and the left column, checks ensure that the traversal is valid.
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        """
+        O(M*N), O(1)/O(M*N)
+        """
+        
+        # Check if the matrix is empty
+        if not matrix or not matrix[0]:
+            return []
+        
+        result = []
+        top, bottom = 0, len(matrix) - 1  # Initialize top and bottom boundaries
+        left, right = 0, len(matrix[0]) - 1  # Initialize left and right boundaries
+
+        # Continue until all boundaries have been processed
+        while top <= bottom and left <= right:
+            # Traverse from left to right along the top row
+            for j in range(left, right + 1):
+                result.append(matrix[top][j])
+            top += 1  # Move the top boundary down
+            
+            # Traverse from top to bottom along the right column
+            for i in range(top, bottom + 1):
+                result.append(matrix[i][right])
+            right -= 1  # Move the right boundary left
+            
+            if top <= bottom:  # Check if there's still a bottom row
+                # Traverse from right to left along the bottom row
+                for j in reversed(range(left, right + 1)):
+                    result.append(matrix[bottom][j])
+                bottom -= 1  # Move the bottom boundary up
+            
+            if left <= right:  # Check if there's still a left column
+                # Traverse from bottom to top along the left column
+                for i in reversed(range(top, bottom + 1)):
+                    result.append(matrix[i][left])
+                left += 1  # Move the left boundary right
+        
+        return result
+```
+
+Alternative implementation
+
+The `direction` variable alternates between `1` (moving right or down) and `-1` (moving left or up). The direction is flipped after each complete traversal to change from horizontal to vertical movement.
+
+We first move along the current row (`cols` iterations) and then along the current column (`rows` iterations). After traversing a full row or column, we decreases the respective count of rows or columns remaining.
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        """
+        O(M*N), O(1)/O(M*N)
+        """
+        
+        # Check if the matrix is empty
+        if not matrix or not matrix[0]:
+            return []
+        
+        rows, cols = len(matrix), len(matrix[0])
+        
+        direction = 1  # Start by moving right
+        i, j = 0, -1  # Start at the first row and just before the first column
+        
+        result = []
+        while rows > 0 and cols > 0:
+            # Traverse the current row: iterate over cols
+            for _ in range(cols):
+                j += direction  # Move right (1) or left (-1)
+                result.append(matrix[i][j])
+            rows -= 1
+            
+            # Traverse the current column: iterate over rows
+            for _ in range(rows):
+                i += direction  # Move down (1) or up (-1)
+                result.append(matrix[i][j])
+            cols -= 1
+            
+            direction *= -1  # Switch direction for the next row/column traversal
+        
+        return result
+```
+
 48. [Rotate Image](https://leetcode.com/problems/rotate-image/)
+
+> You are given an `n x n` 2D `matrix` representing an image, rotate the image by **90**degrees (clockwise).
+> 
+> You have to rotate the image [**in-place**](https://en.wikipedia.org/wiki/In-place_algorithm), which means you have to modify the input 2D matrix directly. **DO NOT** allocate another 2D matrix and do the rotation.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/08/28/mat1.jpg)
+> 
+> **Input:** matrix = [[1,2,3],[4,5,6],[7,8,9]]
+> **Output:** [[7,4,1],[8,5,2],[9,6,3]]
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/08/28/mat2.jpg)
+> 
+> **Input:** matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]
+> **Output:** [[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+> 
+> **Constraints:**
+> 
+> - `n == matrix.length == matrix[i].length`
+> - `1 <= n <= 20`
+> - `-1000 <= matrix[i][j] <= 1000`
+
+Matrix Algebra
+1. Transpose: Convert rows to columns and columns to rows. This is the first step in rotating the matrix.
+2. Reflect: After transposing, reverse each row to achieve the final rotated result.
+
+```
+1 2 3      1 4 7      7 4 1
+4 5 6  ->  2 5 8  ->  8 5 2
+7 8 9      3 6 9      9 6 3
+```
+
+```python
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        
+        O(N^2), O(1)
+        """
+        
+        n = len(matrix)
+        
+        # Step 1: Transpose the matrix
+        for i in range(n):
+            for j in range(i + 1, n):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+        
+        # Step 2: Reverse each row
+        for i in range(n):
+            matrix[i].reverse()
+```
+
 49. [Word Search](https://leetcode.com/problems/word-search/)
+
+> Given an `m x n` grid of characters `board` and a string `word`, return `true` _if_ `word` _exists in the grid_.
+> 
+> The word can be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/11/04/word2.jpg)
+> 
+> **Input:** board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+> **Output:** true
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/11/04/word-1.jpg)
+> 
+> **Input:** board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "SEE"
+> **Output:** true
+> 
+> **Example 3:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/10/15/word3.jpg)
+> 
+> **Input:** board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCB"
+> **Output:** false
+> 
+> **Constraints:**
+> 
+> - `m == board.length`
+> - `n = board[i].length`
+> - `1 <= m, n <= 6`
+> - `1 <= word.length <= 15`
+> - `board` and `word` consists of only lowercase and uppercase English letters.
+> 
+> **Follow up:** Could you use search pruning to make your solution faster with a larger `board`?
+
+Why the need for visit?
+
+1. Preventing Reuse of Cells
+
+In the problem, we are allowed to move to adjacent cells to form the word, but we cannot use the same cell more than once in a single search path. If we don't mark a cell as visited, the algorithm could mistakenly revisit it, leading to incorrect matches.
+
+2. Correct Backtracking
+
+When exploring potential paths (especially with recursive backtracking), marking a cell as visited allows us to maintain a clear state of which cells have been explored in the current path. After all possible paths from a cell have been explored, restoring its original value ensures that other search paths can still use that cell if needed.
+
+Time complexity
+
+For the backtracking function, initially we could have at most 4 directions to explore, but further the choices are reduced into 3 (since we won't go back to where we come from).
+
+As a result, the execution trace after the first step could be visualised as a 3-nary tree, each of the branches represent a potential exploration in the corresponding direction. Therefore, in the worst case, the total number of invocation would be the number of nodes in a full 3-nary tree, which is about 3^L.
+
+We iterate through the board for backtracking, i.e. there could be number of nodes times invocation for the backtracking function in the worst case.
+
+```python
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        """
+        O(M*N*3^L): M*N times 3^L invocations
+        O(L): recursion stack
+        """
+        
+        directions = ((0, 1), (0, -1), (1, 0), (-1, 0))
+        m, n = len(board), len(board[0])
+        l = len(word)
+        
+        def backtrack(i, j, k):
+            # If we have matched all characters of the word
+            if k == l:
+                return True
+            
+            # Check if current position is out of bounds or if the character does not match
+            # We need this boundary check post word index check, else we'll not get accurate results
+            # Ex: board = [["a"]], word = "a", if we do a boundary check before, it'll never reach the function call to mark k = 1
+            if i < 0 or i >= m or j < 0 or j >= n or board[i][j] != word[k]:
+                return False
+            
+            # Mark the cell as visited
+            temp = board[i][j]
+            board[i][j] = '#'  # Temporary marker
+            
+            # Explore all four directions
+            for x, y in directions:
+                new_i, new_j = i + x, j + y
+                if backtrack(new_i, new_j, k + 1):
+                    return True
+            
+            # Restore the cell value after exploring
+            board[i][j] = temp
+            
+            return False
+        
+        # Start backtracking from each cell
+        for i in range(m):
+            for j in range(n):
+                if backtrack(i, j, 0):  # Start backtracking with k = 0
+                    return True
+        
+        return False  # If no match is found
+```
 
 ---
 
 ### String
 
 50. [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
+
+> Given a string `s`, find the length of the **longest substring** without repeating characters.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "abcabcbb"
+> **Output:** 3
+> **Explanation:** The answer is "abc", with the length of 3.
+> 
+> **Example 2:**
+> 
+> **Input:** s = "bbbbb"
+> **Output:** 1
+> **Explanation:** The answer is "b", with the length of 1.
+> 
+> **Example 3:**
+> 
+> **Input:** s = "pwwkew"
+> **Output:** 3
+> **Explanation:** The answer is "wke", with the length of 3.
+> Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
+> 
+> **Constraints:**
+> 
+> - `0 <= s.length <= 5 * 104`
+> - `s` consists of English letters, digits, symbols and spaces.
+
+Sliding window with 2 pointers
+
+As we expand the `right` pointer, we check if the character is already in the `char_set`. If a repeating character is found, we slide the `left` pointer to the right until the character can be added to the set. We calculate the max length after each iteration.
+
+```python
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        """
+        O(n), O(min(n, c))
+        """
+        
+        char_set = set()
+        left = 0
+        max_length = 0
+        
+        for right in range(len(s)):
+            # If the character is already in the set, slide the window from the left
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+            char_set.add(s[right])  # Add the current character to the set
+            max_length = max(max_length, right - left + 1)  # Update the max length
+        
+        return max_length
+```
+
+Optimisation
+
+The above solution uses at most 2n steps (outer + inner loop). We can reduce it to require at most n steps by using a dictionary by mapping the index as well, then skip the characters immediately when we find a repeated character.
+
+```python
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        """
+        O(n), O(min(n, c))
+        """
+        
+        l = 0
+        curr_chars = {}
+        max_len = 0
+        
+        for r in range(len(s)):
+            if s[r] in curr_chars:
+                next_idx = curr_chars[s[r]] + 1
+                l = max(l, next_idx)
+            curr_chars[s[r]] = r
+            max_len = max(max_len, r - l + 1)
+        
+        return max_len
+```
+
 51. [Longest Repeating Character Replacement](https://leetcode.com/problems/longest-repeating-character-replacement/)
+
+> You are given a string `s` and an integer `k`. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most `k` times.
+> 
+> Return _the length of the longest substring containing the same letter you can get after performing the above operations_.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "ABAB", k = 2
+> **Output:** 4
+> **Explanation:** Replace the two 'A's with two 'B's or vice versa.
+> 
+> **Example 2:**
+> 
+> **Input:** s = "AABABBA", k = 1
+> **Output:** 4
+> **Explanation:** Replace the one 'A' in the middle with 'B' and form "AABBBBA".
+> The substring "BBBB" has the longest repeating letters, which is 4.
+> There may exists other ways to achieve this answer too.
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length <= 105`
+> - `s` consists of only uppercase English letters.
+> - `0 <= k <= s.length`
+
+Sliding Window
+
+Keep track of the frequency of characters in the current window and maintain the count of the most frequent character.
+
+Window Adjustment: If the condition `(right - left + 1) - max_count > k` holds true, it means we cannot form a valid substring with at most `k` replacements, so we shrink the window from the left.
+
+```python
+class Solution:
+    def characterReplacement(self, s: str, k: int) -> int:
+        """
+        O(N), O(c) = O(1)
+        """
+        
+        left = 0
+        count = defaultdict(int)
+        max_count = 0
+        max_length = 0
+        window_length = lambda: right - left + 1
+        
+        for right in range(len(s)):
+            count[s[right]] += 1
+            max_count = max(max_count, count[s[right]])
+            
+            # If the current window size minus the max count is greater than k,
+            # it means we need to shrink the window
+            while window_length() - max_count > k:
+                count[s[left]] -= 1  # Remove the leftmost character from the count
+                left += 1  # Slide the window from the left
+            
+            max_length = max(max_length, window_length())
+        
+        return max_length
+```
+
 52. [Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/)
+
+> Given two strings `s` and `t` of lengths `m` and `n` respectively, return _the **minimum window substring_** of `s` _such that every character in_ `t` _(**including duplicates**) is included in the window_. If there is no such substring, return _the empty string_ `""`.
+> 
+> The testcases will be generated such that the answer is **unique**.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "ADOBECODEBANC", t = "ABC"
+> **Output:** "BANC"
+> **Explanation:** The minimum window substring "BANC" includes 'A', 'B', and 'C' from string t.
+> 
+> **Example 2:**
+> 
+> **Input:** s = "a", t = "a"
+> **Output:** "a"
+> **Explanation:** The entire string s is the minimum window.
+> 
+> **Example 3:**
+> 
+> **Input:** s = "a", t = "aa"
+> **Output:** ""
+> **Explanation:** Both 'a's from t must be included in the window.
+> Since the largest window of s only has one 'a', return empty string.
+> 
+> **Constraints:**
+> 
+> - `m == s.length`
+> - `n == t.length`
+> - `1 <= m, n <= 105`
+> - `s` and `t` consist of uppercase and lowercase English letters.
+> 
+> **Follow up:** Could you find an algorithm that runs in `O(m + n)` time?
+
+```python
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        """
+        O(|S| + |T|): worst case we might end up visiting every element of S twice.
+        O(|S| + |T|): |S| when window size is equal to the entire string S. |T| when T has all unique characters.
+        """
+        
+        if not t or not s:
+            return ""
+        
+        t_counter = Counter(t)  # Frequency of characters in t
+        counter = defaultdict(int)  # Frequency of characters in the current window
+        
+        match_count = 0  # Number of characters that match t
+        required_length = len(t_counter)  # Unique characters in t
+        
+        min_length = float('inf')
+        min_substring = ""
+        
+        # Lambda to calculate the current window length
+        window_length = lambda: right - left + 1
+        
+        left = 0
+        for right in range(len(s)):
+            counter[s[right]] += 1
+            
+            # Check if the character is part of t (explicitly not required in counters) and if we have enough of it
+            if counter[s[right]] == t_counter[s[right]]:
+                match_count += 1
+            
+            # Try to contract the window until it ceases to be valid
+            while left <= right and match_count == required_length:
+                # Update the minimum window if the current window is smaller
+                if window_length() < min_length:
+                    min_length = window_length()
+                    min_substring = s[left:right + 1]
+            
+                # Remove the leftmost character from the window, check if that changes the number of matches
+                counter[s[left]] -= 1
+                if counter[s[left]] < t_counter[s[left]]:
+                    match_count -= 1
+                
+                left += 1  # Update pointer
+        
+        return min_substring
+```
+
+A small improvement to the approach can reduce the time complexity of the algorithm to 0(2 * |filtered S| +IS| + |T|), where `filtered_S` is the string formed from S by removing all the elements not present in T.
+
+This complexity reduction is evident when `|filtered_S| <<< |S|`. 
+
+This kind of scenario might happen when length of string T is way too small than the length of string S and string S consists of numerous characters which are not present in T.
+
+```
+S = "ABCDDDDDDEEAFFBC" T = "ABC"
+
+filtered_s = [(O, 'A'), (1, 'B'), (2, 'C'), (11, 'A'), (14, 'B'), (15, 'C')]
+```
+
 53. [Valid Anagram](https://leetcode.com/problems/valid-anagram/)
+
+> Given two strings `s` and `t`, return `true` if `t` is an anagram of `s`, and `false` otherwise.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "anagram", t = "nagaram"
+> 
+> **Output:** true
+> 
+> **Example 2:**
+> 
+> **Input:** s = "rat", t = "car"
+> 
+> **Output:** false
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length, t.length <= 5 * 104`
+> - `s` and `t` consist of lowercase English letters.
+> 
+> **Follow up:** What if the inputs contain Unicode characters? How would you adapt your solution to such a case?
+
+```python
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        """
+        O(|S| + |T|), O(c) = O(1)
+        """
+        
+        # Anagrams must be of the same length
+        if len(s) != len(t):
+            return False
+            
+        return Counter(s) == Counter(t)  # Compare the two count dictionaries 
+```
+
 54. [Group Anagrams](https://leetcode.com/problems/group-anagrams/)
+
+> Given an array of strings `strs`, group the anagrams together. You can return the answer in **any order**.
+> 
+> **Example 1:**
+> 
+> **Input:** strs = ["eat","tea","tan","ate","nat","bat"]
+> 
+> **Output:** [["bat"],["nat","tan"],["ate","eat","tea"]]
+> 
+> **Explanation:**
+> 
+> - There is no string in strs that can be rearranged to form `"bat"`.
+> - The strings `"nat"` and `"tan"` are anagrams as they can be rearranged to form each other.
+> - The strings `"ate"`, `"eat"`, and `"tea"` are anagrams as they can be rearranged to form each other.
+> 
+> **Example 2:**
+> 
+> **Input:** strs = [""]
+> 
+> **Output:** [[""]]
+> 
+> **Example 3:**
+> 
+> **Input:** strs = ["a"]
+> 
+> **Output:** [["a"]]
+> 
+> **Constraints:**
+> 
+> - `1 <= strs.length <= 104`
+> - `0 <= strs[i].length <= 100`
+> - `strs[i]` consists of lowercase English letters.
+
+Use a dictionary to group the strings based on their character count.
+
+```python
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        """
+        N is the number of strings, K is the maximum length of string
+        
+        O(N * K), O(N * K)
+        """
+        
+        anagrams = defaultdict(list)
+        
+        for s in strs:
+            # Create a character count (for 26 lowercase letters)
+            count = [0] * 26  # Since we assume the input contains only lowercase letters
+            for char in s:
+                count[ord(char) - ord('a')] += 1
+            
+            # Convert the count list to a tuple to use as a key
+            key = tuple(count)
+            anagrams[key].append(s)  # Group the original string with its anagram
+        
+        return list(anagrams.values())
+```
+
+Product of primes
+
+Assign a unique prime number to each letter and multiply them to create a unique product for each word. Since the product of primes is unique for the combination of letters, this can be used to identify character counts.
+
+```
+multiples_dict in func generate_primes()
+
+{}
+{4: [2]}
+{4: [2], 9: [3]}
+{9: [3], 6: [2]}
+{9: [3], 6: [2], 25: [5]}
+{9: [3], 25: [5], 8: [2]}
+{9: [3], 25: [5], 8: [2], 49: [7]}
+{9: [3], 25: [5], 49: [7], 10: [2]}
+```
+
+```python
+class Solution:
+    @staticmethod
+    def generate_primes():
+        multiples_dict = defaultdict(list)  # Dictionary to hold multiples of primes
+        curr_num = 2  # Start checking for primes from 2
+        
+        while True:
+            if curr_num not in multiples_dict:
+                yield curr_num  # Yield the current prime
+                multiples_dict[curr_num * curr_num].append(curr_num)  # Mark the square of the prime
+            else:
+                # Mark the multiples of the current prime
+                for prime in multiples_dict[curr_num]:
+                    multiples_dict[prime + curr_num].append(prime)
+                del multiples_dict[curr_num]  # Remove the entry for current_number as it has been processed
+            
+            curr_num += 1  # Move to the next integer
+    
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        """
+        N is the number of strings, K is the maximum length of string
+        
+        O(N * K), O(N)
+        """
+        
+        anagrams = defaultdict(list)
+        
+        primes = self.generate_primes()  # Prime number generator
+        prime_map = {chr(i + ord('a')): next(primes) for i in range(26)}  # Map each letter to a prime
+        
+        for s in strs:
+        # Calculate product of primes for the string
+            product_of_primes = 1
+            for char in s:
+                product_of_primes *= prime_map[char]
+            
+            anagrams[product_of_primes].append(s)  # Group strings by their product of primes
+        
+        return list(anagrams.values())
+```
+
 55. [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)
+
+> Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
+> 
+> An input string is valid if:
+> 
+> 1. Open brackets must be closed by the same type of brackets.
+> 2. Open brackets must be closed in the correct order.
+> 3. Every close bracket has a corresponding open bracket of the same type.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "()"
+> 
+> **Output:** true
+> 
+> **Example 2:**
+> 
+> **Input:** s = "()[]{}"
+> 
+> **Output:** true
+> 
+> **Example 3:**
+> 
+> **Input:** s = "(]"
+> 
+> **Output:** false
+> 
+> **Example 4:**
+> 
+> **Input:** s = "([])"
+> 
+> **Output:** true
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length <= 104`
+> - `s` consists of parentheses only `'()[]{}'`.
+
+We use a dictionary to map closing brackets to their corresponding opening brackets.
+
+We use a stack to keep track of opening brackets. When we encounter a closing bracket, we check if it matches the top of the stack. 
+
+In the end, we need to check if all brackets are matched (i.e., the stack is empty).
+
+```python
+class Solution:
+    def isValid(self, s: str) -> bool:
+        """
+        O(N), O(N)
+        """
+        
+        bracket_map = {')': '(', '}': '{', ']': '['}
+        stack = []
+
+        for char in s:
+            if char in bracket_map:  # If it's a closing bracket
+                top_element = stack.pop() if stack else '#'
+                if bracket_map[char] != top_element:
+                    return False
+            else:  # If it's an opening bracket
+                stack.append(char)
+        
+        return not stack  # Return True if stack is empty (all brackets matched)
+```
+
 56. [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/)
+
+> A phrase is a **palindrome** if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
+> 
+> Given a string `s`, return `true` _if it is a **palindrome**, or_ `false` _otherwise_.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "A man, a plan, a canal: Panama"
+> **Output:** true
+> **Explanation:** "amanaplanacanalpanama" is a palindrome.
+> 
+> **Example 2:**
+> 
+> **Input:** s = "race a car"
+> **Output:** false
+> **Explanation:** "raceacar" is not a palindrome.
+> 
+> **Example 3:**
+> 
+> **Input:** s = " "
+> **Output:** true
+> **Explanation:** s is an empty string "" after removing non-alphanumeric characters.
+> Since an empty string reads the same forward and backward, it is a palindrome.
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length <= 2 * 105`
+> - `s` consists only of printable ASCII characters.
+
+Two pointers
+
+Compare characters from both ends, skipping non-alphanumeric characters and ignoring case sensitivity, moving inward until the pointers meet.
+
+```python
+class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        """
+        O(N), O(1)
+        """
+        
+        l, r = 0, len(s) - 1
+        
+        while l < r:
+            # Move left pointer to the right if the character is not alphanumeric
+            while l < r and not s[l].isalnum():
+                l += 1
+            
+            # Move right pointer to the left if the character is not alphanumeric
+            while l < r and not s[r].isalnum():
+                r -= 1
+
+            # Compare characters at both pointers, ignoring case
+            if s[l].lower() != s[r].lower():
+                return False
+            
+            # Move both pointers inward
+            l += 1
+            r -= 1
+        
+        return True  # If all characters matched, it is a palindrome
+```
+
 57. [Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/)
+
+> Given a string `s`, return _the longest palindromic substring_ in `s`.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "babad"
+> **Output:** "bab"
+> **Explanation:** "aba" is also a valid answer.
+> 
+> **Example 2:**
+> 
+> **Input:** s = "cbbd"
+> **Output:** "bb"
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length <= 1000`
+> - `s` consist of only digits and English letters.
+
+Expand Around Center
+
+For each character (and each pair of consecutive characters), expand outward to check for palindromes. This accounts for both odd and even length palindromes.
+
+Maintain variables to track the start and end indices of the longest palindrome found during the process.
+
+```python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        """
+        O(N^2)
+        n centers for odd-length + (n - 1) centers for even-length
+        = 2n - 1 centers = O(n)
+        
+        For each center, expand costs O(n), although practically it'll be much less as most centers will not produce long palindromes.
+        
+        O(1)
+        """
+        
+        start, end = 0, 0
+        
+        for i in range(len(s)):
+            # Check for odd-length palindromes
+            left1, right1 = self.expandAroundCenter(s, i, i)
+            # Check for even-length palindromes
+            left2, right2 = self.expandAroundCenter(s, i, i + 1)
+            
+            # Update start and end for the longer palindrome found
+            if right1 - left1 > end - start:
+                start, end = left1, right1
+            if right2 - left2 > end - start:
+                start, end = left2, right2
+        
+        return s[start:end + 1]
+    
+    def expandAroundCenter(self, s: str, left: int, right: int) -> tuple:
+        while left >= 0 and right < len(s) and s[left] == s[right]:
+            left -= 1
+            right += 1
+        
+        return left + 1, right - 1  # left is decremented and right is incremented one extra time before exiting the loop
+```
+
 58. [Palindromic Substrings](https://leetcode.com/problems/palindromic-substrings/)
+
+> Given a string `s`, return _the number of **palindromic substrings** in it_.
+> 
+> A string is a **palindrome** when it reads the same backward as forward.
+> 
+> A **substring** is a contiguous sequence of characters within the string.
+> 
+> **Example 1:**
+> 
+> **Input:** s = "abc"
+> **Output:** 3
+> **Explanation:** Three palindromic strings: "a", "b", "c".
+> 
+> **Example 2:**
+> 
+> **Input:** s = "aaa"
+> **Output:** 6
+> **Explanation:** Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa".
+> 
+> **Constraints:**
+> 
+> - `1 <= s.length <= 1000`
+> - `s` consists of lowercase English letters.
+
+Expand Around Center
+
+For each character (for odd-length palindromes) and each pair of consecutive characters (for even-length palindromes), expand outward to count palindromic substrings. Increment a count each time a valid palindrome is found.
+
+```python
+class Solution:
+    def countSubstrings(self, s: str) -> int:
+        """
+        O(N^2), O(1)
+        """
+        
+        count = 0
+        
+        for i in range(len(s)):
+            # Count odd-length palindromes
+            count += self.expandAroundCenter(s, i, i)
+            # Count even-length palindromes
+            count += self.expandAroundCenter(s, i, i + 1)
+        
+        return count
+
+    def expandAroundCenter(self, s: str, left: int, right: int) -> int:
+        count = 0
+        while left >= 0 and right < len(s) and s[left] == s[right]:
+            count += 1
+            left -= 1
+            right += 1
+        
+        return count
+```
+
 59. [Encode and Decode Strings](https://leetcode.com/problems/encode-and-decode-strings/)
+
+> Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.
+> 
+> Machine 1 (sender) has the function:
+> 
+> string encode(vector\<string> strs) {
+>     // ... your code
+>     return encoded_string;
+> }
+> 
+> Machine 2 (receiver) has the function:
+> 
+> vector\<string> decode(string s) {
+>     //... your code
+>     return strs;
+> }
+> 
+> So Machine 1 does:
+> 
+> string encoded_string = encode(strs);
+> 
+> and Machine 2 does:
+> 
+> vector\<string> strs2 = decode (encoded_string);
+> 
+> `strs2` in Machine 2 should be the same as `strs` in Machine 1.
+> 
+> Implement the `encode` and `decode` methods.
+> 
+> You are not allowed to solve the problem using any serialize methods (such as `eval`).
+> 
+> Example 1:
+> 
+> Input: dummy_input = ["Hello", "World" ]
+> Output: ["Hello", "World" ]
+> Explanation:
+> 
+> Machine 1:
+> Codec encoder = new Codec() ;
+> String msg = encoder.encode(strs) ;
+> Machine 1 --msg--> Machine 2
+> 
+> Machine 2:
+> Codec decoder = new Codec() ;
+> String[] strs = decoder. decode(msg) ;
+> 
+> Example 2:
+> 
+> Input: dummy_input = [''']
+> Output: ['''']
+> 
+> Constraints:
+> - ﻿﻿1< strs. length <= 200
+> - ﻿﻿0 <= strs[i]. length <= 200
+> - ﻿﻿strs [i] contains any possible characters out of 256 valid ASCII characters.
+> 
+> Follow up: Could you write a generalized algorithm to work on any possible set of characters?
+
+Chunked Transfer Encoding
+
+Prefix each string with its length as a fixed-width string (e.g., 4 characters), which allows for easy parsing without using delimiters.
+
+```python
+class Codec:
+    def encode(self, strs: List[str]) -> str:
+        """
+        O(N), O(N)
+        """
+        
+        encoded_chunks = []
+        for s in strs:
+            # Convert length to a fixed-width string (e.g., 4 characters)
+            length_prefix = f"{len(s):04d}"
+            # Encode each string with its length and a delimiter
+            encoded_chunks.append(f"{length_prefix}{s}")
+        
+        return ''.join(encoded_chunks)
+
+    def decode(self, s: str) -> List[str]:
+        """
+        O(N), O(N)
+        """
+        
+        result = []
+        i = 0
+        
+        while i < len(s):
+            # Read the fixed-width length prefix (4 characters)
+            length_prefix = s[i:i + 4]
+            length = int(length_prefix)
+            i += 4  # Move past the length prefix
+            
+            # Extract the string of the specified length
+            result.append(s[i:i + length])
+            i += length  # Move to the next chunk
+        
+        return result
+```
 
 ---
 
