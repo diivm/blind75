@@ -4811,8 +4811,229 @@ class Codec:
 
 ## Heap
 
-74. [Merge K Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/)
-75. [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/)
-76. [Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/)
+74. [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/)
+
+> Given an integer array `nums` and an integer `k`, return _the_ `k` _most frequent elements_. You may return the answer in **any order**.
+> 
+> **Example 1:**
+> 
+> **Input:** nums = [1,1,1,2,2,3], k = 2
+> **Output:** [1,2]
+> 
+> **Example 2:**
+> 
+> **Input:** nums = [1], k = 1
+> **Output:** [1]
+> 
+> **Constraints:**
+> 
+> - `1 <= nums.length <= 105`
+> - `-104 <= nums[i] <= 104`
+> - `k` is in the range `[1, the number of unique elements in the array]`.
+> - It is **guaranteed** that the answer is **unique**.
+> 
+> **Follow up:** Your algorithm's time complexity must be better than `O(n log n)`, where n is the array's size.
+
+Heap
+
+Use a dictionary to count the frequency of each element in the input list. Create a max-heap to keep track of the top k elements based on their frequency.
+
+```python
+from collections import Counter
+import heapq
+
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        """
+        U: unique elements, U <= N
+        
+        O(N + U log U + k log U) = O(NlogN)
+        O(U) = O(N)
+        """
+        
+        # Count the frequency of each number in the list: O(N)
+        frequency = Counter(nums)
+        
+        # Use a max-heap to store elements based on their frequency: O(UlogU)
+        max_heap = []
+        for num, freq in frequency.items():
+            # Push the negative frequency and the number into the max-heap
+            heapq.heappush(max_heap, (-freq, num))
+        
+        # Extract the top k elements from the max-heap: O(klogU)
+        return [heapq.heappop(max_heap)[1] for _ in range(k)]
+```
+
+Bucket sort
+
+Create a counter, organise elements into buckets based on their frequencies and collect the top k elements by iterating through the buckets in reverse order.
+
+```
+nums = [1,1,1,2,2,2,3,3,4]
+
+frequency = {1: 3, 2: 3, 3: 2, 4: 1}
+
+bucket = [[], [4], [3], [1, 2], [], [], [], [], [], []]
+```
+
+```python
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        """
+        O(N), O(N)
+        """
+        
+        n = len(nums)
+        
+        # Count frequencies
+        frequency = Counter(nums)
+        
+        # Create buckets
+        bucket = [[] for _ in range(n + 1)]
+        for num, freq in frequency.items():
+            bucket[freq].append(num)
+        
+        # Collect results
+        flat_list = []
+        for i in reversed(range(n + 1)):
+            for num in bucket[i]:
+                flat_list.append(num)
+                if len(flat_list) == k:
+                    return flat_list
+```
+
+75. [Find Median from Data Stream](https://leetcode.com/problems/find-median-from-data-stream/)
+
+> The **median** is the middle value in an ordered integer list. If the size of the list is even, there is no middle value, and the median is the mean of the two middle values.
+> 
+> - For example, for `arr = [2,3,4]`, the median is `3`.
+> - For example, for `arr = [2,3]`, the median is `(2 + 3) / 2 = 2.5`.
+> 
+> Implement the MedianFinder class:
+> 
+> - `MedianFinder()` initializes the `MedianFinder` object.
+> - `void addNum(int num)` adds the integer `num` from the data stream to the data structure.
+> - `double findMedian()` returns the median of all elements so far. Answers within `10-5`of the actual answer will be accepted.
+> 
+> **Example 1:**
+> 
+> **Input**
+> ["MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian"]
+> [[], [1], [2], [], [3], []]
+> **Output**
+> [null, null, null, 1.5, null, 2.0]
+> 
+> **Explanation**
+> MedianFinder medianFinder = new MedianFinder();
+> medianFinder.addNum(1);    // arr = [1]
+> medianFinder.addNum(2);    // arr = [1, 2]
+> medianFinder.findMedian(); // return 1.5 (i.e., (1 + 2) / 2)
+> medianFinder.addNum(3);    // arr[1, 2, 3]
+> medianFinder.findMedian(); // return 2.0
+> 
+> **Constraints:**
+> 
+> - `-105 <= num <= 105`
+> - There will be at least one element in the data structure before calling `findMedian`.
+> - At most `5 * 104` calls will be made to `addNum` and `findMedian`.
+> 
+> **Follow up:**
+> 
+> - If all integer numbers from the stream are in the range `[0, 100]`, how would you optimize your solution?
+> - If `99%` of all integer numbers from the stream are in the range `[0, 100]`, how would you optimize your solution?
+
+2 Heaps
+- A max-heap for the lower half of the numbers.
+- A min-heap for the upper half of the numbers.
+
+| Number | Max-Heap    | Min-Heap   | Median |
+| ------ | ----------- | ---------- | ------ |
+| **5**  | `[-5]`      | `[]`       | `5.0`  |
+| **15** | `[-5]`      | `[15]`     | `10.0` |
+| **10** | `[-10, -5]` | `[15]`     | `10.0` |
+| **20** | `[-10, -5]` | `[15, 20]` | `12.5` |
+| **30** | `[-15, -5]` | `[20, 30]` | `15.0` 
+
+Adding a number
+1. The number is added to the `max_heap` (inverted).
+2. The largest element from `max_heap` is moved to `min_heap` to maintain the order.
+3. If `min_heap` becomes larger than `max_heap`, the smallest element from `min_heap` is moved back to `max_heap`.
+
+```python
+import heapq
+
+class MedianFinder:
+    def __init__(self):
+        # Max-heap for the lower half of the numbers
+        self.max_heap = []
+        # Min-heap for the upper half of the numbers
+        self.min_heap = []
+
+    def addNum(self, num: int) -> None:
+        """
+        O(logN), O(N)
+        """
+        
+        # Add the number to the max-heap (invert the number for max-heap behavior)
+        heapq.heappush(self.max_heap, -num)
+
+        # Move the largest number from max-heap to min-heap to maintain order
+        heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))
+
+        # Ensure max-heap can have at most one more element than min-heap
+        if len(self.max_heap) < len(self.min_heap):
+            # Move the smallest number from min-heap back to max-heap
+            heapq.heappush(self.max_heap, -heapq.heappop(self.min_heap))
+
+    def findMedian(self) -> float:
+        """
+        O(1), O(1)
+        """
+        
+        # If max-heap has more elements, the median is the root of max-heap
+        if len(self.max_heap) > len(self.min_heap):
+            return -self.max_heap[0]
+        # If both heaps are of equal size, the median is the average of the roots
+        return (self.min_heap[0] + -self.max_heap[0]) / 2
+
+# Example usage:
+# obj = MedianFinder()
+# obj.addNum(num)
+# param_2 = obj.findMedian()
+
+```
+
+SortedList
+
+```python
+from sortedcontainers import SortedList
+
+class MedianFinder:
+    def __init__(self):
+        # SortedList to maintain the numbers in sorted order
+        self.numbers = SortedList()
+
+    def addNum(self, num: int) -> None:
+        """
+        O(logN): uses binary search
+        """
+        
+        # Add the number to the multiset (SortedList)
+        self.numbers.add(num)
+
+    def findMedian(self) -> float:
+        """
+        O(1)
+        """
+        
+        n = len(self.numbers)
+        mid = n // 2
+        if n % 2 == 1:
+            # If odd, return the middle element
+            return float(self.numbers[mid])
+        else:
+            # If even, return the average of the two middle elements
+            return (self.numbers[mid - 1] + self.numbers[mid]) / 2
+```
 
 ---
