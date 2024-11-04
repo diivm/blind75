@@ -4793,19 +4793,1124 @@ class Codec:
 ### Tree
 
 60. [Maximum Depth of Binary Tree](https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+
+> Given the `root` of a binary tree, return _its maximum depth_.
+> 
+> A binary tree's **maximum depth** is the number of nodes along the longest path from the root node down to the farthest leaf node.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/11/26/tmp-tree.jpg)
+> 
+> **Input:** root = [3,9,20,null,null,15,7]
+> **Output:** 3
+> 
+> **Example 2:**
+> 
+> **Input:** root = [1,null,2]
+> **Output:** 2
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is in the range `[0, 104]`.
+> - `-100 <= Node.val <= 100`
+
+DFS
+
+```python
+class Solution:
+    def maxDepth(self, root: Optional[TreeNode]) -> int:
+        """
+        O(N), O(H)
+        """
+        
+        if not root:
+            return 0  # Base case: empty tree has depth 0
+        
+        return max(self.maxDepth(root.left), self.maxDepth(root.right)) + 1
+```
+
+BFS
+
+```python
+from collections import deque
+
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        """
+        O(N), O(W)
+        """
+        
+        if not root:
+            return 0  # Base case: empty tree has depth 0
+        
+        queue = deque([root])
+        depth = 0
+        
+        while queue:
+            depth += 1  # Increase depth for each level
+            for _ in range(len(queue)):  # Process all nodes at the current level
+                node = queue.popleft()
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+        
+        return depth
+```
+
 61. [Same Tree](https://leetcode.com/problems/same-tree/)
-62. [Invert/Flip Binary Tree](https://leetcode.com/problems/invert-binary-tree/)
+
+> Given the roots of two binary trees `p` and `q`, write a function to check if they are the same or not.
+> 
+> Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/12/20/ex1.jpg)
+> 
+> **Input:** p = [1,2,3], q = [1,2,3]
+> **Output:** true
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/12/20/ex2.jpg)
+> 
+> **Input:** p = [1,2], q = [1,null,2]
+> **Output:** false
+> 
+> **Example 3:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/12/20/ex3.jpg)
+> 
+> **Input:** p = [1,2,1], q = [1,1,2]
+> **Output:** false
+> 
+> **Constraints:**
+> 
+> - The number of nodes in both trees is in the range `[0, 100]`.
+> - `-104 <= Node.val <= 104`
+
+DFS
+
+```python
+class Solution:
+    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+        """
+        O(N), O(H)
+        """
+        
+        if not p and not q:
+            return True
+        
+        if not p or not q or (p.val != q.val):
+            return False
+        
+        return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+```
+
+BFS
+
+```python
+class Solution:
+    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+        """
+        O(N), O(W)
+        """
+        
+        queue = deque([[p, q]])
+        while queue:
+            a, b = queue.popleft()
+            
+            if not a and not b:
+                continue
+            
+            if not a or not b or a.val != b.val:
+                return False
+            
+            queue.append([a.left, b.left])
+            queue.append([a.right, b.right])
+        
+        return True
+```
+
+62. [Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/)
+
+> Given the `root` of a binary tree, invert the tree, and return _its root_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/03/14/invert1-tree.jpg)
+> 
+> **Input:** root = [4,2,7,1,3,6,9]
+> **Output:** [4,7,2,9,6,3,1]
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/03/14/invert2-tree.jpg)
+> 
+> **Input:** root = [2,1,3]
+> **Output:** [2,3,1]
+> 
+> **Example 3:**
+> 
+> **Input:** root = []
+> **Output:** []
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is in the range `[0, 100]`.
+> - `-100 <= Node.val <= 100`
+
+DFS
+
+```python
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        """
+        O(N), O(H)
+        """
+        
+        if not root:
+            return
+        
+        # Swap the left and right children
+        root.left, root.right = root.right, root.left
+        
+        self.invertTree(root.left)
+        self.invertTree(root.right)
+        
+        return root
+```
+
+BFS
+
+```python
+from collections import deque
+
+class Solution:
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        """
+        O(N), O(W)
+        """
+        
+        if not root:
+            return None
+        
+        queue = deque([root])
+        
+        while queue:
+            node = queue.popleft()
+            # Swap the left and right children
+            node.left, node.right = node.right, node.left
+            
+            # Add children to the queue
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        
+        return root
+```
+
 63. [Binary Tree Maximum Path Sum](https://leetcode.com/problems/binary-tree-maximum-path-sum/)
+
+> A **path** in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence **at most once**. Note that the path does not need to pass through the root.
+> 
+> The **path sum** of a path is the sum of the node's values in the path.
+> 
+> Given the `root` of a binary tree, return _the maximum **path sum** of any **non-empty**path_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/10/13/exx1.jpg)
+> 
+> **Input:** root = [1,2,3]
+> **Output:** 6
+> **Explanation:** The optimal path is 2 -> 1 -> 3 with a path sum of 2 + 1 + 3 = 6.
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/10/13/exx2.jpg)
+> 
+> **Input:** root = [-10,9,20,null,null,15,7]
+> **Output:** 42
+> **Explanation:** The optimal path is 15 -> 20 -> 7 with a path sum of 15 + 20 + 7 = 42.
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is in the range `[1, 3 * 104]`.
+> - `-1000 <= Node.val <= 1000`
+
+Post order DFS
+
+1. Path starts at root and goes down through the root's left child.
+2. Path starts at root and goes down through the root's right child.
+3. Path involves both the left and the right child.
+4. Path doesn't involve any child. The root itself is the only element of the path with maximum sum.
+
+Since every path must include the root, we begin by assuming that the initial path sum is equal to the root node's value. To find the overall maximum path sum, we first determine the possible path sums from both the left and right subtrees.
+
+The contributions from these subtrees can be either negative or positive. It is essential to consider a subtree's contribution only if it is positive; if the contribution is negative, it would decrease the overall path sum, so we ignore it.
+
+Therefore, we need to calculate the maximum gain in path sum from both the left and right subtrees. This means we must process the child nodes before the parent node, which is why a post-order traversal is ideal: it ensures that we fully explore the children before evaluating the parent node's contribution.
+
+While we calculate the maximum path sums that include the root, we also need to consider paths that do not pass through the root. To accommodate this, our recursive function not only returns the maximum path sum contribution from a subtree but also tracks the overall maximum path sum encountered during the traversal. We update this maximum whenever we find a new higher sum, regardless of whether the path includes the root or not.
+
+```python
+class Solution:
+    def maxPathSum(self, root: TreeNode) -> int:
+        """
+        O(N), O(H)
+        """
+        
+        self.max_sum = float('-inf')
+        
+        def max_gain(node):
+            if not node:
+                return 0  # Base case: no contribution from null nodes
+            
+            # Recursively get the maximum contribution from left and right subtrees, only consider positive gains
+            left_gain = max(max_gain(node.left), 0)
+            right_gain = max(max_gain(node.right), 0)
+            
+            # Current path sum including the node
+            current_path_sum = node.val + left_gain + right_gain
+            
+            # Update the global maximum path sum
+            self.max_sum = max(self.max_sum, current_path_sum)
+            
+            # Return the maximum gain for the current node to its parent
+            return node.val + max(left_gain, right_gain)
+        
+        max_gain(root)
+        return self.max_sum
+```
+
 64. [Binary Tree Level Order Traversal](https://leetcode.com/problems/binary-tree-level-order-traversal/)
+
+> Given the `root` of a binary tree, return _the level order traversal of its nodes' values_. (i.e., from left to right, level by level).
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/02/19/tree1.jpg)
+> 
+> **Input:** root = [3,9,20,null,null,15,7]
+> **Output:** [[3],[9,20],[15,7]]
+> 
+> **Example 2:**
+> 
+> **Input:** root = [1]
+> **Output:** [[1]]
+> 
+> **Example 3:**
+> 
+> **Input:** root = []
+> **Output:** []
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is in the range `[0, 2000]`.
+> - `-1000 <= Node.val <= 1000`
+
+BFS
+
+```python
+from collections import deque
+
+class Solution:
+    def levelOrder(self, root: TreeNode) -> List[List[int]]:
+        """
+        O(N), O(W)
+        """
+        
+        if not root:
+            return []
+        
+        result = []
+        queue = deque([root])
+        
+        while queue:
+            level_size = len(queue)  # Number of nodes at the current level
+            current_level = []
+            
+            for _ in range(level_size):
+                node = queue.popleft()  # Dequeue the front node
+                current_level.append(node.val)  # Add the node's value to the current level
+                
+                # Enqueue left and right children
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+            
+            result.append(current_level)  # Add the current level to the result
+        
+        return result
+```
+
 65. [Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/)
+
+> Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+> 
+> Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.
+> 
+> **Clarification:** The input/output format is the same as [how LeetCode serializes a binary tree](https://support.leetcode.com/hc/en-us/articles/32442719377939-How-to-create-test-cases-on-LeetCode#h_01J5EGREAW3NAEJ14XC07GRW1A). You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/09/15/serdeser.jpg)
+> 
+> **Input:** root = [1,2,3,null,null,4,5]
+> **Output:** [1,2,3,null,null,4,5]
+> 
+> **Example 2:**
+> 
+> **Input:** root = []
+> **Output:** []
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is in the range `[0, 104]`.
+> - `-1000 <= Node.val <= 1000`
+
+We can use a pre-order traversal for serialisation, which captures the structure of the tree as we traverse. For deserialisation, we can split the string and reconstruct the tree using the same traversal order.
+
+```
+      1
+     / \
+    2   3
+       / \
+      4   5
+
+Serialized String: `"1,2,#,#,3,4,#,#,5,#,#"` (# represents null)
+```
+
+```python
+class Codec:
+    def serialize(self, root: TreeNode) -> str:
+        """Encodes a tree to a single string.
+        
+        O(N), O(N)
+        """
+        def preorder(node):
+            if not node:
+                return ["#"]  # Use "#" to represent null nodes
+            return [str(node.val)] + preorder(node.left) + preorder(node.right)
+        
+        return ",".join(preorder(root))
+    
+    def deserialize(self, data: str) -> TreeNode:
+        """Decodes your encoded data to tree.
+        
+        O(N), O(N)
+        """
+        values = iter(data.split(","))  # Create an iterator from the split string
+        
+        def build_tree():
+            val = next(values)
+            if val == "#":
+                return None  # If the value is "#", return None
+            node = TreeNode(int(val))
+            node.left = build_tree()  # Recursively build the left subtree
+            node.right = build_tree()  # Recursively build the right subtree
+            return node
+        
+        return build_tree()
+```
+
 66. [Subtree of Another Tree](https://leetcode.com/problems/subtree-of-another-tree/)
+
+> Given the roots of two binary trees `root` and `subRoot`, return `true` if there is a subtree of `root` with the same structure and node values of `subRoot` and `false`otherwise.
+> 
+> A subtree of a binary tree `tree` is a tree that consists of a node in `tree` and all of this node's descendants. The tree `tree` could also be considered as a subtree of itself.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/04/28/subtree1-tree.jpg)
+> 
+> **Input:** root = [3,4,5,1,2], subRoot = [4,1,2]
+> **Output:** true
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/04/28/subtree2-tree.jpg)
+> 
+> **Input:** root = [3,4,5,1,2,null,null,null,null,0], subRoot = [4,1,2]
+> **Output:** false
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the `root` tree is in the range `[1, 2000]`.
+> - The number of nodes in the `subRoot` tree is in the range `[1, 1000]`.
+> - `-104 <= root.val <= 104`
+> - `-104 <= subRoot.val <= 104`
+
+DFS
+
+For each node in `root`, check if the subtree rooted at that node matches `subRoot`. Use a helper function to compare two trees.
+
+```python
+class Solution:
+    def isIdentical(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+        # Both trees are empty
+        if not root1 and not root2:
+            return True
+        
+        # One tree is empty or values don't match
+        if not root1 or not root2 or root1.val != root2.val:
+            return False
+        
+        # Recursively check left and right children
+        return self.isIdentical(root1.left, root2.left) and self.isIdentical(root1.right, root2.right)
+
+    def isSubtree(self, root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+        """
+        N: nodes in root, M: nodes in subroot
+        
+        O(N*M), O(H)
+        """
+        
+        # If root is None, subRoot cannot be a subtree
+        if not root:
+            return False
+        
+        # Check if the current tree matches subRoot or recurse on left/right children
+        return (self.isIdentical(root, subRoot) or 
+                self.isSubtree(root.left, subRoot) or 
+                self.isSubtree(root.right, subRoot))
+```
+
+String matching
+
+Serialise the trees into a string format, use substring search to check if the serialised subtree exists in the serialised main tree.
+
+On top the standard serialisation method, we have one limitation.
+
+```
+tree = [12], subtree = [2]
+
+Serialisation:
+
+root: "12,#,#"
+subtree: "2,#,#"
+
+Subtree check:
+
+"2,#,#" is a substring of "12,#,#"
+```
+
+We can add a character (like `^`) before a node's value to overcome this.
+
+```
+tree = [12], subtree = [2]
+
+Serialisation:
+
+root: "^12,#,#"
+subtree: "^2,#,#"
+
+Subtree check:
+
+"^2,#,#" is not a substring of "^12,#,#"
+```
+\
+```python
+class Solution:
+    def serialize(self, root: TreeNode) -> str:
+        if not root:
+            return '#'  # Use "#" to represent null nodes
+        
+        return f"^{root.val},{self.serialize(root.left)},{self.serialize(root.right)}"
+    
+    def isSubtree(self, root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+        """
+        O(N + M), O(N + M)
+        """
+        
+        return self.serialize(subRoot) in self.serialize(root)
+```
+
 67. [Construct Binary Tree from Preorder and Inorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+> Given two integer arrays `preorder` and `inorder` where `preorder` is the preorder traversal of a binary tree and `inorder` is the inorder traversal of the same tree, construct and return _the binary tree_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/02/19/tree.jpg)
+> 
+> **Input:** preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+> **Output:** [3,9,20,null,null,15,7]
+> 
+> **Example 2:**
+> 
+> **Input:** preorder = [-1], inorder = [-1]
+> **Output:** [-1]
+> 
+> **Constraints:**
+> 
+> - `1 <= preorder.length <= 3000`
+> - `inorder.length == preorder.length`
+> - `-3000 <= preorder[i], inorder[i] <= 3000`
+> - `preorder` and `inorder` consist of **unique** values.
+> - Each value of `inorder` also appears in `preorder`.
+> - `preorder` is **guaranteed** to be the preorder traversal of the tree.
+> - `inorder` is **guaranteed** to be the inorder traversal of the tree.
+
+The two key observations are:
+1. ﻿﻿﻿Preorder traversal follows `root -> left -> right`, given the `preorder` array, the `root` is the first element `preorder[0]`.
+2. ﻿﻿﻿Inorder traversal follows `left -> root -> right`, if we know the position of `root`, we can recursively split the entire array Into two subtrees.
+
+We use the first element of the preorder as the root. We use that to find the index of the root in the inorder array, which in turn gives us the left and right subtrees.
+
+```python
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        """
+        O(N^2) due to the index lookup in the inorder array
+        O(N)
+        """
+        
+        if not preorder or not inorder:
+            return None
+
+        # The first element in preorder is the root
+        root_val = preorder[0]
+        root = TreeNode(root_val)
+
+        # Find the index of the root in inorder
+        root_index = inorder.index(root_val)
+
+        # Split the preorder and inorder lists for left and right subtrees
+        # Preorder for left subtree: preorder[1:root_index + 1]
+        # Preorder for right subtree: preorder[root_index + 1:]
+        # Inorder for left subtree: inorder[:root_index]
+        # Inorder for right subtree: inorder[root_index + 1:]
+
+        root.left = self.buildTree(preorder[1:root_index + 1], inorder[:root_index])
+        root.right = self.buildTree(preorder[root_index + 1:], inorder[root_index + 1:])
+
+```
+
 68. [Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/)
+
+> Given the `root` of a binary tree, _determine if it is a valid binary search tree (BST)_.
+> 
+> A **valid BST** is defined as follows:
+> 
+> - The left 
+>     
+>     subtree
+>     
+>      of a node contains only nodes with keys **less than** the node's key.
+> - The right subtree of a node contains only nodes with keys **greater than** the node's key.
+> - Both the left and right subtrees must also be binary search trees.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/12/01/tree1.jpg)
+> 
+> **Input:** root = [2,1,3]
+> **Output:** true
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/12/01/tree2.jpg)
+> 
+> **Input:** root = [5,1,4,null,null,3,6]
+> **Output:** false
+> **Explanation:** The root node's value is 5 but its right child's value is 4.
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is in the range `[1, 104]`.
+> - `-231 <= Node.val <= 231 - 1`
+
+Keep track of the allowable value range for each node using min and max parameters.
+
+Check if the current node's value is within the specified range (greater than min and less than max). Recursively check the left subtree (with updated max) and the right subtree (with updated min).
+
+```python
+class Solution:
+    def isValidBST(self, root: TreeNode) -> bool:
+        """
+        O(N), O(H)
+        """
+        
+        def validate(node: TreeNode, low: float, high: float) -> bool:
+            if not node:
+                return True
+            if not (low < node.val < high):
+                return False
+            
+            return validate(node.left, low, node.val) and validate(node.right, node.val, high)
+        
+        return validate(root, float('-inf'), float('inf'))
+```
+
+Inorder Traversal
+
+Perform an inorder traversal of the tree and collect the node values, verify that the collected values are in strictly increasing order.
+
+```python
+class Solution:
+    def __init__(self):
+        self.previous_value = float('-inf')  # To track the last visited node value
+
+    def isValidBST(self, node: Optional[TreeNode]) -> bool:
+        """
+        O(N), O(H)
+        """
+        
+        if not node:
+            return True  # An empty tree is a valid BST
+        
+        # Validate the left subtree
+        if not self.isValidBST(node.left):
+            return False
+
+        # Check if the current node's value is greater than the previous value
+        if not (node.val > self.previous_value):
+            return False  # Violates the BST property
+        
+        # Update the previous_value to the current node's value
+        self.previous_value = node.val
+        
+        # Validate the right subtree
+        return self.isValidBST(node.right)
+```
+
 69. [Kth Smallest Element in a BST](https://leetcode.com/problems/kth-smallest-element-in-a-bst/)
+
+> Given the `root` of a binary search tree, and an integer `k`, return _the_ `kth` _smallest value (**1-indexed**) of all the values of the nodes in the tree_.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/01/28/kthtree1.jpg)
+> 
+> **Input:** root = [3,1,4,null,2], k = 1
+> **Output:** 1
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2021/01/28/kthtree2.jpg)
+> 
+> **Input:** root = [5,3,6,2,4,null,null,1], k = 3
+> **Output:** 3
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is `n`.
+> - `1 <= k <= n <= 104`
+> - `0 <= Node.val <= 104`
+> 
+> **Follow up:** If the BST is modified often (i.e., we can do insert and delete operations) and you need to find the kth smallest frequently, how would you optimize?
+
+Iterative DFS
+
+```python
+class Solution:
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+        """
+        O(H + k), O(H)
+        """
+        
+        stack = []
+        while True:
+            while root:
+                stack.append(root)
+                root = root.left
+            
+            root = stack.pop()
+            k -= 1
+            if k == 0:
+                return root.val
+            
+            root = root.right
+```
+
 70. [Lowest Common Ancestor of BST](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+
+> Given a binary search tree (BST), find the lowest common ancestor (LCA) node of two given nodes in the BST.
+> 
+> According to the [definition of LCA on Wikipedia](https://en.wikipedia.org/wiki/Lowest_common_ancestor): “The lowest common ancestor is defined between two nodes `p` and `q` as the lowest node in `T` that has both `p` and `q`as descendants (where we allow **a node to be a descendant of itself**).”
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2018/12/14/binarysearchtree_improved.png)
+> 
+> **Input:** root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+> **Output:** 6
+> **Explanation:** The LCA of nodes 2 and 8 is 6.
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2018/12/14/binarysearchtree_improved.png)
+> 
+> **Input:** root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+> **Output:** 2
+> **Explanation:** The LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.
+> 
+> **Example 3:**
+> 
+> **Input:** root = [2,1], p = 2, q = 1
+> **Output:** 2
+> 
+> **Constraints:**
+> 
+> - The number of nodes in the tree is in the range `[2, 105]`.
+> - `-109 <= Node.val <= 109`
+> - All `Node.val` are **unique**.
+> - `p != q`
+> - `p` and `q` will exist in the BST.
+
+Tree traversal:
+1. If both target nodes (let's call them `p` and `q`) are less than the current node, move to the left child.
+2. If both are greater, move to the right child.
+3. If one is on one side and the other is on the other side (or if one of them is equal to the current node), then the current node is the LCA.
+
+```python
+class Solution:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        """
+        O(H), O(H)
+        """
+        
+        # If both p and q are less than root, LCA is in the left subtree
+        if p.val < root.val and q.val < root.val:
+            return self.lowestCommonAncestor(root.left, p, q)
+        # If both p and q are greater than root, LCA is in the right subtree
+        elif p.val > root.val and q.val > root.val:
+            return self.lowestCommonAncestor(root.right, p, q)
+        else:
+            # We have found the split point; this is the LCA
+            return root
+```
+
+Iterative traversal: saves recursion stack space
+
+```python
+class Solution:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        """
+        O(H), O(1)
+        """
+        
+        # Start from the root and traverse the tree
+        while root:
+            # If both p and q are less than root, LCA is in the left subtree
+            if p.val < root.val and q.val < root.val:
+                root = root.left
+            # If both p and q are greater than root, LCA is in the right subtree
+            elif p.val > root.val and q.val > root.val:
+                root = root.right
+            else:
+                # We have found the split point; this is the LCA
+                return root
+```
+
 71. [Implement Trie (Prefix Tree)](https://leetcode.com/problems/implement-trie-prefix-tree/)
-72. [Add and Search Word](https://leetcode.com/problems/add-and-search-word-data-structure-design/)
+
+> A [**trie**](https://en.wikipedia.org/wiki/Trie) (pronounced as "try") or **prefix tree** is a tree data structure used to efficiently store and retrieve keys in a dataset of strings. There are various applications of this data structure, such as autocomplete and spellchecker.
+> 
+> Implement the Trie class:
+> 
+> - `Trie()` Initializes the trie object.
+> - `void insert(String word)` Inserts the string `word` into the trie.
+> - `boolean search(String word)` Returns `true` if the string `word` is in the trie (i.e., was inserted before), and `false` otherwise.
+> - `boolean startsWith(String prefix)` Returns `true` if there is a previously inserted string `word` that has the prefix `prefix`, and `false` otherwise.
+> 
+> **Example 1:**
+> 
+> **Input**
+> ["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+> [[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]
+> **Output**
+> [null, null, true, false, true, null, true]
+> 
+> **Explanation**
+> Trie trie = new Trie();
+> trie.insert("apple");
+> trie.search("apple");   // return True
+> trie.search("app");     // return False
+> trie.startsWith("app"); // return True
+> trie.insert("app");
+> trie.search("app");     // return True
+> 
+> **Constraints:**
+> 
+> - `1 <= word.length, prefix.length <= 2000`
+> - `word` and `prefix` consist only of lowercase English letters.
+> - At most `3 * 104` calls **in total** will be made to `insert`, `search`, and `startsWith`.
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = {}  # Dictionary to hold children nodes
+        self.is_end_of_word = False  # Flag to mark the end of a word
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()  # Initialize the root of the Trie
+
+    def insert(self, word: str) -> None:
+        """
+        n: key length
+        
+        O(n), O(n)
+        """
+        
+        node = self.root
+        for char in word:
+            # If the character is not already a child, create a new TrieNode
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end_of_word = True  # Mark the end of the word
+
+    def search(self, word: str) -> bool:
+        """
+        O(n), O(1)
+        """
+        
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False  # If character not found, the word doesn't exist
+            node = node.children[char]
+        return node.is_end_of_word  # Return True if it's a complete word
+
+    def startsWith(self, prefix: str) -> bool:
+        """
+        O(n), O(1)
+        """
+        
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False  # If character not found, no words with that prefix
+            node = node.children[char]
+        return True  # Prefix found
+```
+
+72. [Design Add and Search Words Data Structure](https://leetcode.com/problems/design-add-and-search-words-data-structure)
+
+> Design a data structure that supports adding new words and finding if a string matches any previously added string.
+> 
+> Implement the `WordDictionary` class:
+> 
+> - `WordDictionary()` Initializes the object.
+> - `void addWord(word)` Adds `word` to the data structure, it can be matched later.
+> - `bool search(word)` Returns `true` if there is any string in the data structure that matches `word` or `false` otherwise. `word` may contain dots `'.'` where dots can be matched with any letter.
+> 
+> **Example:**
+> 
+> **Input**
+> ["WordDictionary","addWord","addWord","addWord","search","search","search","search"]
+> [[],["bad"],["dad"],["mad"],["pad"],["bad"],[".ad"],["b.."]]
+> **Output**
+> [null,null,null,null,false,true,true,true]
+> 
+> **Explanation**
+> WordDictionary wordDictionary = new WordDictionary();
+> wordDictionary.addWord("bad");
+> wordDictionary.addWord("dad");
+> wordDictionary.addWord("mad");
+> wordDictionary.search("pad"); // return False
+> wordDictionary.search("bad"); // return True
+> wordDictionary.search(".ad"); // return True
+> wordDictionary.search("b.."); // return True
+> 
+> **Constraints:**
+> 
+> - `1 <= word.length <= 25`
+> - `word` in `addWord` consists of lowercase English letters.
+> - `word` in `search` consist of `'.'` or lowercase English letters.
+> - There will be at most `2` dots in `word` for `search` queries.
+> - At most `104` calls will be made to `addWord` and `search`.
+
+Trie + Wildcard search
+
+Search with Wildcards:
+- If a `.` is encountered, check all possible children nodes recursively to see if any complete the word.
+- Else, if a specific character is found, continue to the next character in the word (standard search).
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = {}  # Dictionary to hold children nodes
+        self.is_end_of_word = False  # Flag to mark the end of a word
+
+class WordDictionary:
+    def __init__(self):
+        self.root = TrieNode()  # Initialize the root of the Trie
+
+    def addWord(self, word: str) -> None:
+        """
+        N: len of word
+        
+        O(N), O(N)
+        """
+        
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()  # Create new TrieNode for new character
+            node = node.children[char]
+        node.is_end_of_word = True  # Mark the end of the word
+
+    def search(self, word: str) -> bool:
+        """
+        N: len of word, K: len of wildcards
+        
+        O(N) for well-defined words, O(N.26^K) worst case for undefined words
+        O(1) for well-defined words, O(N) worst case for undefined words
+        """
+        
+        return self._search_in_node(word, self.root)
+
+    def _search_in_node(self, word: str, node: TrieNode) -> bool:
+        for i, char in enumerate(word):
+            if char == '.':
+                # If current character is a wildcard, check all children nodes
+                for child in node.children.values():
+                    if self._search_in_node(word[i + 1:], child):
+                        return True
+                return False  # If no child matched, return False
+            else:
+                if char not in node.children:
+                    return False  # If character not found, return False
+                node = node.children[char]
+        return node.is_end_of_word  # Return True if it's the end of a valid word
+```
+
 73. [Word Search II](https://leetcode.com/problems/word-search-ii/)
+
+> Given an `m x n` `board` of characters and a list of strings `words`, return _all words on the board_.
+> 
+> Each word must be constructed from letters of sequentially adjacent cells, where **adjacent cells** are horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+> 
+> **Example 1:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/11/07/search1.jpg)
+> 
+> **Input:** board = [["o","a","a","n"],["e","t","a","e"],["i","h","k","r"],["i","f","l","v"]], words = ["oath","pea","eat","rain"]
+> **Output:** ["eat","oath"]
+> 
+> **Example 2:**
+> 
+> ![](https://assets.leetcode.com/uploads/2020/11/07/search2.jpg)
+> 
+> **Input:** board = [["a","b"],["c","d"]], words = ["abcb"]
+> **Output:** []
+> 
+> **Constraints:**
+> 
+> - `m == board.length`
+> - `n == board[i].length`
+> - `1 <= m, n <= 12`
+> - `board[i][j]` is a lowercase English letter.
+> - `1 <= words.length <= 3 * 104`
+> - `1 <= words[i].length <= 10`
+> - `words[i]` consists of lowercase English letters.
+> - All the strings of `words` are unique.
+
+Trie + Backtracking
+
+When initiating the search, we insert all the words into the Trie for efficient prefix searching. The backtracking starts from each cell on the board, exploring all possible paths while simultaneously traversing the Trie. By marking cells as visited during the search, we prevent cycles and ensure that each character is used only once per word formation.
+
+Optimisation
+
+An essential optimisation is pruning the Trie during the backtracking process: once a word is found, its corresponding node can be marked to avoid re-checking. This reduces the search space and improves efficiency, particularly in cases with many overlapping words.
+
+```python
+node.is_end_of_word = False  # Avoid duplicate entries
+```
+
+When a complete word is found (i.e., when `node.is_end_of_word` is `True`), the word is added to the `result` set. Immediately after that, the algorithm sets `node.is_end_of_word` to `False`. This marks the node as no longer representing the end of a word, effectively preventing the algorithm from adding the same word again during subsequent searches.
+
+This change means that if the DFS reaches this node again in future iterations, it will not consider it a valid endpoint for a word, thereby pruning unnecessary paths in the Trie and optimising the search process.
+
+Additionally, while the initial implementation doesn't explicitly remove child nodes from the Trie, you could further enhance pruning by checking if the node has no children after finding a word and removing it to save space, which can be done as follows:
+
+```python
+# After restoring the cell's original value
+if not node.children and not node.is_end_of_word:
+    node.children.pop(char, None)
+```
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end_of_word = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end_of_word = True
+
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        """
+        N and M are the dimensions of the board
+        L is the length of the longest word
+        T is the total number of letters in the dictionary
+        
+        O(N * M * (4 * 3^(L-1))): no. of cells * backtracking steps
+        number of cells: N * M
+        maximum steps in backtracking for each starting cell: 4 * 3^(L-1)
+        
+        O(T): Trie storage
+        """
+        
+        result = set()
+        m, n = len(board), len(board[0])
+
+        def backtrack(node, x, y, path):
+            # If the current TrieNode marks the end of a word, add the word to the result
+            if node.is_end_of_word:
+                result.add(path)
+                node.is_end_of_word = False  # Avoid duplicate entries
+            
+            # Boundary and visited cell check
+            if x < 0 or x >= m or y < 0 or y >= n or board[x][y] == '#':
+                return
+            
+            char = board[x][y]
+            # If the character is not a valid child in the Trie, exit
+            if char not in node.children:
+                return
+            
+            # Mark the cell as visited
+            board[x][y] = '#'
+            
+            # Explore the neighboring cells
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                backtrack(node.children[char], x + dx, y + dy, path + char)
+            
+            # Restore the cell's original value after exploring (unvisit)
+            board[x][y] = char
+
+        # Create a Trie and insert all words
+        trie = Trie()
+        for word in words:
+            trie.insert(word)
+        
+        # Start backtracking from each cell in the board
+        for i in range(m):
+            for j in range(n):
+                backtrack(trie.root, i, j, "")
+        
+        return list(result)
+```
 
 ---
 
