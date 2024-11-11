@@ -243,9 +243,14 @@ class Solution:
     """
     
     curr_sum = max_sum = -inf # curr_sum = max_sum != 0 because for nums = [-1], we should return -1
+    
     for num in nums:
-      curr_sum = max(num, curr_sum + num)
-      max_sum = max(max_sum, curr_sum)
+        # Update curr_sum:
+        # Either start a new subarray with the current number (num), or
+        # continue the previous subarray by adding the current number (curr_sum + num)
+        curr_sum = max(num, curr_sum + num)
+        
+        max_sum = max(max_sum, curr_sum)
     
     return max_sum
 ```
@@ -4116,17 +4121,17 @@ class Solution:
         O(n), O(min(n, c))
         """
         
-        l = 0
+        left = 0
         curr_chars = {}
         max_len = 0
-        
-        for r in range(len(s)):
-            if s[r] in curr_chars:
-                next_idx = curr_chars[s[r]] + 1
-                l = max(l, next_idx)
-            curr_chars[s[r]] = r
-            max_len = max(max_len, r - l + 1)
-        
+
+        for right, char in enumerate(s):
+            if char in curr_chars:
+                next_idx = curr_chars[char] + 1
+                left = max(left, next_idx)
+            curr_chars[char] = right
+            max_len = max(max_len, right - left + 1)
+
         return max_len
 ```
 
@@ -4306,6 +4311,30 @@ filtered_s = [(O, 'A'), (1, 'B'), (2, 'C'), (11, 'A'), (14, 'B'), (15, 'C')]
 > - `s` and `t` consist of lowercase English letters.
 > 
 > **Follow up:** What if the inputs contain Unicode characters? How would you adapt your solution to such a case?
+
+Compare character counter arrays.
+
+```python
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        """
+        O(|S| + |T|), O(c) = O(1)
+        """
+        
+        # Anagrams must be of the same length
+        if len(s) != len(t):
+            return False
+
+        s_counter, t_counter = [0] * 26, [0] * 26
+
+        for a, b in zip(s, t):
+            s_counter[ord(a) - ord('a')] += 1
+            t_counter[ord(b) - ord('a')] += 1
+            
+        return s_counter == t_counter
+```
+
+For unicode characters, use a dictionary.
 
 ```python
 class Solution:
