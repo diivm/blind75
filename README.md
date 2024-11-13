@@ -518,7 +518,7 @@ For the current element, there might be multiple left-right pairs where the trip
 class Solution:
   def threeSum(self, nums: List[int]) -> List[List[int]]:
     """
-    O(N^2), O(N)
+    O(N^2), O(1)
     """
     
     nums.sort()
@@ -565,27 +565,36 @@ The `seen` set is used to keep track of numbers we’ve encountered in the inn
 
 ```python
 class Solution:
-  def threeSum(self, nums: List[int]) -> List[List[int]]:
-    """
-    O(N^2), O(N)
-    """
-    
-    res = set()
-    dups = set() # optimization: avoid duplicates in outerloop
-    
-    for i, first in enumerate(nums):
-      if first not in dups:
-        dups.add(first)
-        seen = set() # track of numbers in innerloop
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        """
+        O(N^2), O(N)
+        """
         
-        for second in nums[i+1:]:
-          third = -(first + second) # zero sum
-          if third in seen:
-            # To form a valid triplet, third must be a number that has already been encountered while iterating through the nums array.
-            res.add(tuple(sorted((first, second, third))))
-            seen.add(second)
-    
-    return res
+        result = set()  # To store unique triplets as sets (no duplicates)
+        duplicates = set()  # To store elements already used as the first element of a triplet
+        
+        for i in range(len(nums)):
+            # Skip the current number if it's already been used as the first element
+            if nums[i] in duplicates:
+                continue
+            
+            # Mark the number as used as the first element of a triplet
+            duplicates.add(nums[i])
+            
+            target = -nums[i]  # The target sum for the other two numbers
+            seen = set()  # To store numbers we've already seen while looking for pairs
+            
+            for j in range(i + 1, len(nums)):
+                complement = target - nums[j]
+                
+                # If the complement exists in 'seen', we found a valid triplet
+                if complement in seen:
+                    result.add(tuple(sorted([nums[i], nums[j], complement])))  # Add sorted triplet to avoid duplicates
+                
+                seen.add(nums[j])  # Add the current number to 'seen'
+        
+        # Convert the result set of tuples back to a list of lists
+        return [list(triplet) for triplet in result]
 ```
 
 10. [Container With Most Water](https://leetcode.com/problems/container-with-most-water/)
@@ -1150,6 +1159,8 @@ class Solution:
 
 Bottom-up DP
 
+For each coin in the `coins` array, update the `dp` array for all amounts from that coin's value up to `amount`. The idea is that if you can make a certain amount `i` by using a coin of value `coin`, then the number of coins needed to make `i` is the minimum of the current value and `dp[i - coin] + 1` (because we just added one more coin).
+
 ```python
 class Solution:
   def coinChange(self, coins: List[int], amount: int) -> int:
@@ -1158,17 +1169,16 @@ class Solution:
     """
     
     dp = [float("inf")] * (amount + 1)
-    dp[0] = 0
+    dp[0] = 0  # No coins are needed to make 0
     
-    for i in range(amount + 1):
-      for coin in coins:
-        if coin <= i:
-          dp[i] = min(dp[i], dp[i-coin] + 1)
+    for coin in coins:
+        for i in range(coin, amount + 1):
+            dp[i] = min(dp[i], dp[i - coin] + 1)
     
     return dp[amount] if dp[amount] != float("inf") else -1
 ```
 
-Top down DP
+Top down DP (Memoization)
 
 ```python
 class Solution:
