@@ -158,7 +158,7 @@ class Solution:
       s.add(num)
 ```
 
-1. [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/)
+4. [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/)
 
 > Given an integer array `nums`, return _an array_ `answer` _such that_ `answer[i]` _is equal to the product of all the elements of_ `nums` _except_ `nums[i]`.
 > 
