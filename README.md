@@ -882,7 +882,7 @@ class Solution:
     return bits
 ```
 
-1.  [Counting Bits](https://leetcode.com/problems/counting-bits/)
+14.  [Counting Bits](https://leetcode.com/problems/counting-bits/)
 
 > Given an integer `n`, return _an array_ `ans` _of length_ `n + 1` _such that for each_ `i` (`0 <= i <= n`)_,_ `ans[i]` _is the **number of**_ `1`_**'s** in the binary representation of_ `i`.
 > 
