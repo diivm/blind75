@@ -13,17 +13,23 @@
 > **Example 1:**
 > 
 > **Input:** nums = [2,7,11,15], target = 9
+> 
 > **Output:** [0,1]
+> 
 > **Explanation:** Because nums[0] + nums[1] == 9, we return [0, 1].
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [3,2,4], target = 6
+> 
 > **Output:** [1,2]
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [3,3], target = 6
+> 
 > **Output:** [0,1]
 > 
 > **Constraints:**
@@ -62,14 +68,19 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** prices = [7,1,5,3,6,4]
+> 
 > **Output:** 5
+> 
 > **Explanation:** Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
 > Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** prices = [7,6,4,3,1]
+> 
 > **Output:** 0
+> 
 > **Explanation:** In this case, no transactions are done and the max profit = 0.
 > 
 > **Constraints:**
@@ -108,6 +119,7 @@ class Solution:
 > 
 > The element 1 occurs at the indices 0 and 3.
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** nums = [1,2,3,4]
@@ -117,6 +129,7 @@ class Solution:
 > **Explanation:**
 > 
 > All elements are distinct.
+> 
 > 
 > **Example 3:**
 > 
@@ -145,7 +158,7 @@ class Solution:
       s.add(num)
 ```
 
-4. [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/)
+1. [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/)
 
 > Given an integer array `nums`, return _an array_ `answer` _such that_ `answer[i]` _is equal to the product of all the elements of_ `nums` _except_ `nums[i]`.
 > 
@@ -156,11 +169,14 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [1,2,3,4]
+> 
 > **Output:** [24,12,8,6]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [-1,1,0,-3,3]
+> 
 > **Output:** [0,0,9,0,0]
 > 
 > **Constraints:**
@@ -207,19 +223,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [-2,1,-3,4,-1,2,1,-5,4]
+> 
 > **Output:** 6
+> 
 > **Explanation:** The subarray [4,-1,2,1] has the largest sum 6.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [1]
+> 
 > **Output:** 1
+> 
 > **Explanation:** The subarray [1] has the largest sum 1.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [5,4,-1,7,8]
+> 
 > **Output:** 23
+> 
 > **Explanation:** The subarray [5,4,-1,7,8] has the largest sum 23.
 > 
 > **Constraints:**
@@ -264,13 +288,18 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [2,3,-2,4]
+> 
 > **Output:** 6
+> 
 > **Explanation:** [2,3] has the largest product 6.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [-2,0,-1]
+> 
 > **Output:** 0
+> 
 > **Explanation:** The result cannot be 2, because [-2,-1] is not a subarray.
 > 
 > **Constraints:**
@@ -333,19 +362,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [3,4,5,1,2]
+> 
 > **Output:** 1
+> 
 > **Explanation:** The original array was [1,2,3,4,5] rotated 3 times.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [4,5,6,7,0,1,2]
+> 
 > **Output:** 0
+> 
 > **Explanation:** The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [11,13,15,17]
+> 
 > **Output:** 11
+> 
 > **Explanation:** The original array was [11,13,15,17] and it was rotated 4 times. 
 > 
 > **Constraints:**
@@ -416,16 +453,21 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [4,5,6,7,0,1,2], target = 0
+> 
 > **Output:** 4
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [4,5,6,7,0,1,2], target = 3
+> 
 > **Output:** -1
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [1], target = 0
+> 
 > **Output:** -1
 > 
 > **Constraints:**
@@ -481,7 +523,9 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [-1,0,1,2,-1,-4]
+> 
 > **Output:** [[-1,-1,2],[-1,0,1]]
+> 
 > **Explanation:** 
 > nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.
 > nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.
@@ -489,16 +533,22 @@ class Solution:
 > The distinct triplets are [-1,0,1] and [-1,-1,2].
 > Notice that the order of the output and the order of the triplets does not matter.
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** nums = [0,1,1]
+> 
 > **Output:** []
+> 
 > **Explanation:** The only possible triplet does not sum up to 0.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [0,0,0]
+> 
 > **Output:** [[0,0,0]]
+> 
 > **Explanation:** The only possible triplet sums up to 0.
 > 
 > **Constraints:**
@@ -612,12 +662,16 @@ class Solution:
 > ![](https://s3-lc-upload.s3.amazonaws.com/uploads/2018/07/17/question_11.jpg)
 > 
 > **Input:** height = [1,8,6,2,5,4,8,3,7]
+> 
 > **Output:** 49
+> 
 > **Explanation:** The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. In this case, the max area of water (blue section) the container can contain is 49.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** height = [1,1]
+> 
 > **Output:** 1
 > 
 > **Constraints:**
@@ -664,12 +718,16 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [100,4,200,1,3,2]
+> 
 > **Output:** 4
+> 
 > **Explanation:** The longest consecutive elements sequence is `[1, 2, 3, 4]`. Therefore its length is 4.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [0,3,7,2,5,8,4,6,0,1]
+> 
 > **Output:** 9
 > 
 > **Constraints:**
@@ -713,11 +771,14 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** a = 1, b = 2
+> 
 > **Output:** 3
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** a = 2, b = 3
+> 
 > **Output:** 5
 > 
 > **Constraints:**
@@ -774,6 +835,7 @@ class Solution:
 > 
 > The input binary string **1011** has a total of three set bits.
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** n = 128
@@ -783,6 +845,7 @@ class Solution:
 > **Explanation:**
 > 
 > The input binary string **10000000** has a total of one set bit.
+> 
 > 
 > **Example 3:**
 > 
@@ -819,23 +882,28 @@ class Solution:
     return bits
 ```
 
-14. [Counting Bits](https://leetcode.com/problems/counting-bits/)
+1.  [Counting Bits](https://leetcode.com/problems/counting-bits/)
 
 > Given an integer `n`, return _an array_ `ans` _of length_ `n + 1` _such that for each_ `i` (`0 <= i <= n`)_,_ `ans[i]` _is the **number of**_ `1`_**'s** in the binary representation of_ `i`.
 > 
 > **Example 1:**
 > 
 > **Input:** n = 2
+> 
 > **Output:** [0,1,1]
+> 
 > **Explanation:**
 > 0 --> 0
 > 1 --> 1
 > 2 --> 10
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** n = 5
+> 
 > **Output:** [0,1,1,2,1,2]
+> 
 > **Explanation:**
 > 0 --> 0
 > 1 --> 1
@@ -916,19 +984,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [3,0,1]
+> 
 > **Output:** 2
+> 
 > **Explanation:** n = 3 since there are 3 numbers, so all numbers are in the range [0,3]. 2 is the missing number in the range since it does not appear in nums.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [0,1]
+> 
 > **Output:** 2
+> 
 > **Explanation:** n = 2 since there are 2 numbers, so all numbers are in the range [0,2]. 2 is the missing number in the range since it does not appear in nums.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [9,6,4,2,3,5,7,0,1]
+> 
 > **Output:** 8
+> 
 > **Explanation:** n = 9 since there are 9 numbers, so all numbers are in the range [0,9]. 8 is the missing number in the range since it does not appear in nums.
 > 
 > **Constraints:**
@@ -1008,13 +1084,18 @@ Side note: Expected sum calculated via Gauss formula `n * (n + 1) / 2`  subtract
 > **Example 1:**
 > 
 > **Input:** n = 00000010100101000001111010011100
+> 
 > **Output:**    964176192 (00111001011110000010100101000000)
+> 
 > **Explanation:** The input binary string **00000010100101000001111010011100** represents the unsigned integer 43261596, so return 964176192 which its binary representation is **00111001011110000010100101000000**.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** n = 11111111111111111111111111111101
+> 
 > **Output:**   3221225471 (10111111111111111111111111111111)
+> 
 > **Explanation:** The input binary string **11111111111111111111111111111101** represents the unsigned integer 4294967293, so return 3221225471 which its binary representation is **10111111111111111111111111111111**.
 > 
 > **Constraints:**
@@ -1061,15 +1142,20 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** n = 2
+> 
 > **Output:** 2
+> 
 > **Explanation:** There are two ways to climb to the top.
 > 1. 1 step + 1 step
 > 2. 2 steps
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** n = 3
+> 
 > **Output:** 3
+> 
 > **Explanation:** There are three ways to climb to the top.
 > 1. 1 step + 1 step + 1 step
 > 2. 1 step + 2 steps
@@ -1138,17 +1224,23 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** coins = [1,2,5], amount = 11
+> 
 > **Output:** 3
+> 
 > **Explanation:** 11 = 5 + 5 + 1
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** coins = [2], amount = 3
+> 
 > **Output:** -1
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** coins = [1], amount = 0
+> 
 > **Output:** 0
 > 
 > **Constraints:**
@@ -1211,17 +1303,23 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [10,9,2,5,3,7,101,18]
+> 
 > **Output:** 4
+> 
 > **Explanation:** The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [0,1,0,3,2,3]
+> 
 > **Output:** 4
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [7,7,7,7,7,7,7]
+> 
 > **Output:** 1
 > 
 > **Constraints:**
@@ -1421,19 +1519,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** text1 = "abcde", text2 = "ace" 
+> 
 > **Output:** 3  
+> 
 > **Explanation:** The longest common subsequence is "ace" and its length is 3.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** text1 = "abc", text2 = "abc"
+> 
 > **Output:** 3
+> 
 > **Explanation:** The longest common subsequence is "abc" and its length is 3.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** text1 = "abc", text2 = "def"
+> 
 > **Output:** 0
+> 
 > **Explanation:** There is no such common subsequence, so the result is 0.
 > 
 > **Constraints:**
@@ -1533,19 +1639,26 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** s = "leetcode", wordDict = ["leet","code"]
+> 
 > **Output:** true
+> 
 > **Explanation:** Return true because "leetcode" can be segmented as "leet code".
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** s = "applepenapple", wordDict = ["apple","pen"]
+> 
 > **Output:** true
+> 
 > **Explanation:** Return true because "applepenapple" can be segmented as "apple pen apple".
 > Note that you are allowed to reuse a dictionary word.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+> 
 > **Output:** false
 > 
 > **Constraints:**
@@ -1600,20 +1713,26 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** candidates = [2,3,6,7], target = 7
+> 
 > **Output:** [[2,2,3],[7]]
+> 
 > **Explanation:**
 > 2 and 3 are candidates, and 2 + 2 + 3 = 7. Note that 2 can be used multiple times.
 > 7 is a candidate, and 7 = 7.
 > These are the only two combinations.
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** candidates = [2,3,5], target = 8
+> 
 > **Output:** [[2,2,2,2],[2,3,3],[3,5]]
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** candidates = [2], target = 1
+> 
 > **Output:** []
 > 
 > **Constraints:**
@@ -1670,14 +1789,19 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [1,2,3,1]
+> 
 > **Output:** 4
+> 
 > **Explanation:** Rob house 1 (money = 1) and then rob house 3 (money = 3).
 > Total amount you can rob = 1 + 3 = 4.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [2,7,9,3,1]
+> 
 > **Output:** 12
+> 
 > **Explanation:** Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).
 > Total amount you can rob = 2 + 9 + 1 = 12.
 > 
@@ -1770,19 +1894,26 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [2,3,2]
+> 
 > **Output:** 3
+> 
 > **Explanation:** You cannot rob house 1 (money = 2) and then rob house 3 (money = 2), because they are adjacent houses.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [1,2,3,1]
+> 
 > **Output:** 4
+> 
 > **Explanation:** Rob house 1 (money = 1) and then rob house 3 (money = 3).
 > Total amount you can rob = 1 + 3 = 4.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** nums = [1,2,3]
+> 
 > **Output:** 3
 > 
 > **Constraints:**
@@ -1854,6 +1985,7 @@ class Solution:
 > 
 > "12" could be decoded as "AB" (1 2) or "L" (12).
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** s = "226"
@@ -1863,6 +1995,7 @@ class Solution:
 > **Explanation:**
 > 
 > "226" could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
+> 
 > 
 > **Example 3:**
 > 
@@ -1966,12 +2099,16 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2018/10/22/robot_maze.png)
 > 
 > **Input:** m = 3, n = 7
+> 
 > **Output:** 28
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** m = 3, n = 2
+> 
 > **Output:** 3
+> 
 > **Explanation:** From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:
 > 1. Right -> Down -> Down
 > 2. Down -> Down -> Right
@@ -2088,13 +2225,18 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [2,3,1,1,4]
+> 
 > **Output:** true
+> 
 > **Explanation:** Jump 1 step from index 0 to 1, then 3 steps to the last index.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [3,2,1,0,4]
+> 
 > **Output:** false
+> 
 > **Explanation:** You will always arrive at index 3 no matter what. Its maximum jump length is 0, which makes it impossible to reach the last index.
 > 
 > **Constraints:**
@@ -2181,25 +2323,33 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2019/11/04/133_clone_graph_question.png)
 > 
 > **Input:** adjList = [[2,4],[1,3],[2,4],[1,3]]
+> 
 > **Output:** [[2,4],[1,3],[2,4],[1,3]]
+> 
 > **Explanation:** There are 4 nodes in the graph.
 > 1st node (val = 1)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).
 > 2nd node (val = 2)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).
 > 3rd node (val = 3)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).
 > 4th node (val = 4)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).
 > 
+> 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/01/07/graph.png)
 > 
 > **Input:** adjList = [[]]
+> 
 > **Output:** [[]]
+> 
 > **Explanation:** Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** adjList = []
+> 
 > **Output:** []
+> 
 > **Explanation:** This an empty graph, it does not have any nodes.
 > 
 > **Constraints:**
@@ -2258,14 +2408,19 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** numCourses = 2, prerequisites = [[1,0]]
+> 
 > **Output:** true
+> 
 > **Explanation:** There are a total of 2 courses to take. 
 > To take course 1 you should have finished course 0. So it is possible.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** numCourses = 2, prerequisites = [[1,0],[0,1]]
+> 
 > **Output:** false
+> 
 > **Explanation:** There are a total of 2 courses to take. 
 > To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
 > 
@@ -2335,7 +2490,9 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2021/06/08/waterflow-grid.jpg)
 > 
 > **Input:** heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]
+> 
 > **Output:** [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
+> 
 > **Explanation:** The following cells can flow to the Pacific and Atlantic oceans, as shown below:
 ```
 [0,4]: [0,4] -> Pacific Ocean 
@@ -2355,10 +2512,13 @@ class Solution:
 ```
 > Note that there are other possible paths for these cells to flow to the Pacific and Atlantic oceans.
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** heights = [[1]]
+> 
 > **Output:** [[0,0]]
+> 
 > **Explanation:** The water can flow from the only cell to the Pacific and Atlantic oceans.
 > 
 > **Constraints:**
@@ -2430,7 +2590,9 @@ class Solution:
 >   ["1","1","0","0","0"],
 >   ["0","0","0","0","0"]
 > ]
+> 
 > **Output:** 1
+> 
 > 
 > **Example 2:**
 > 
@@ -2440,6 +2602,7 @@ class Solution:
 >   ["0","0","1","0","0"],
 >   ["0","0","0","1","1"]
 > ]
+> 
 > **Output:** 3
 > 
 > **Constraints:**
@@ -2870,12 +3033,16 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** intervals = [[1,3],[6,9]], newInterval = [2,5]
+> 
 > **Output:** [[1,5],[6,9]]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+> 
 > **Output:** [[1,2],[3,10],[12,16]]
+> 
 > **Explanation:** Because the new interval [4,8] overlaps with [3,5],[6,7],[8,10].
 > 
 > **Constraints:**
@@ -2971,13 +3138,18 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** intervals = [[1,3],[2,6],[8,10],[15,18]]
+> 
 > **Output:** [[1,6],[8,10],[15,18]]
+> 
 > **Explanation:** Since intervals [1,3] and [2,6] overlap, merge them into [1,6].
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** intervals = [[1,4],[4,5]]
+> 
 > **Output:** [[1,5]]
+> 
 > **Explanation:** Intervals [1,4] and [4,5] are considered overlapping.
 > 
 > **Constraints:**
@@ -3029,19 +3201,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** intervals = [[1,2],[2,3],[3,4],[1,3]]
+> 
 > **Output:** 1
+> 
 > **Explanation:** [1,3] can be removed and the rest of the intervals are non-overlapping.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** intervals = [[1,2],[1,2],[1,2]]
+> 
 > **Output:** 2
+> 
 > **Explanation:** You need to remove two [1,2] to make the rest of the intervals non-overlapping.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** intervals = [[1,2],[2,3]]
+> 
 > **Output:** 0
+> 
 > **Explanation:** You don't need to remove any of the intervals since they're already non-overlapping.
 > 
 > **Constraints:**
@@ -3209,18 +3389,23 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2021/02/19/rev1ex1.jpg)
 > 
 > **Input:** head = [1,2,3,4,5]
+> 
 > **Output:** [5,4,3,2,1]
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2021/02/19/rev1ex2.jpg)
 > 
 > **Input:** head = [1,2]
+> 
 > **Output:** [2,1]
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** head = []
+> 
 > **Output:** []
 > 
 > **Constraints:**
@@ -3311,23 +3496,31 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist.png)
 > 
 > **Input:** head = [3,2,0,-4], pos = 1
+> 
 > **Output:** true
+> 
 > **Explanation:** There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist_test2.png)
 > 
 > **Input:** head = [1,2], pos = 0
+> 
 > **Output:** true
+> 
 > **Explanation:** There is a cycle in the linked list, where the tail connects to the 0th node.
+> 
 > 
 > **Example 3:**
 > 
 > ![](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist_test3.png)
 > 
 > **Input:** head = [1], pos = -1
+> 
 > **Output:** false
+> 
 > **Explanation:** There is no cycle in the linked list.
 > 
 > **Constraints:**
@@ -3371,16 +3564,21 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/10/03/merge_ex1.jpg)
 > 
 > **Input:** list1 = [1,2,4], list2 = [1,3,4]
+> 
 > **Output:** [1,1,2,3,4,4]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** list1 = [], list2 = []
+> 
 > **Output:** []
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** list1 = [], list2 = [0]
+> 
 > **Output:** [0]
 > 
 > **Constraints:**
@@ -3431,7 +3629,9 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** lists = [[1,4,5],[1,3,4],[2,6]]
+> 
 > **Output:** [1,1,2,3,4,4,5,6]
+> 
 > **Explanation:** The linked-lists are:
 > [
 >   1->4->5,
@@ -3441,14 +3641,18 @@ class Solution:
 > merging them into one sorted list:
 > 1->1->2->3->4->4->5->6
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** lists = []
+> 
 > **Output:** []
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** lists = [[]]
+> 
 > **Output:** []
 > 
 > **Constraints:**
@@ -3586,16 +3790,21 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/10/03/remove_ex1.jpg)
 > 
 > **Input:** head = [1,2,3,4,5], n = 2
+> 
 > **Output:** [1,2,3,5]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** head = [1], n = 1
+> 
 > **Output:** []
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** head = [1,2], n = 1
+> 
 > **Output:** [1]
 > 
 > **Constraints:**
@@ -3651,13 +3860,16 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2021/03/04/reorder1linked-list.jpg)
 > 
 > **Input:** head = [1,2,3,4]
+> 
 > **Output:** [1,4,2,3]
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2021/03/09/reorder2-linked-list.jpg)
 > 
 > **Input:** head = [1,2,3,4,5]
+> 
 > **Output:** [1,5,2,4,3]
 > 
 > **Constraints:**
@@ -3718,13 +3930,16 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/08/17/mat1.jpg)
 > 
 > **Input:** matrix = [[1,1,1],[1,0,1],[1,1,1]]
+> 
 > **Output:** [[1,0,1],[0,0,0],[1,0,1]]
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/08/17/mat2.jpg)
 > 
 > **Input:** matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+> 
 > **Output:** [[0,0,0,0],[0,4,5,0],[0,3,1,0]]
 > 
 > **Constraints:**
@@ -3798,13 +4013,16 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/11/13/spiral1.jpg)
 > 
 > **Input:** matrix = [[1,2,3],[4,5,6],[7,8,9]]
+> 
 > **Output:** [1,2,3,6,9,8,7,4,5]
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/11/13/spiral.jpg)
 > 
 > **Input:** matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+> 
 > **Output:** [1,2,3,4,8,12,11,10,9,5,6,7]
 > 
 > **Constraints:**
@@ -3914,13 +4132,16 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/08/28/mat1.jpg)
 > 
 > **Input:** matrix = [[1,2,3],[4,5,6],[7,8,9]]
+> 
 > **Output:** [[7,4,1],[8,5,2],[9,6,3]]
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/08/28/mat2.jpg)
 > 
 > **Input:** matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]
+> 
 > **Output:** [[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
 > 
 > **Constraints:**
@@ -3971,20 +4192,25 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/11/04/word2.jpg)
 > 
 > **Input:** board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+> 
 > **Output:** true
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/11/04/word-1.jpg)
 > 
 > **Input:** board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "SEE"
+> 
 > **Output:** true
+> 
 > 
 > **Example 3:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/10/15/word3.jpg)
 > 
 > **Input:** board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCB"
+> 
 > **Output:** false
 > 
 > **Constraints:**
@@ -4073,19 +4299,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** s = "abcabcbb"
+> 
 > **Output:** 3
+> 
 > **Explanation:** The answer is "abc", with the length of 3.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** s = "bbbbb"
+> 
 > **Output:** 1
+> 
 > **Explanation:** The answer is "b", with the length of 1.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** s = "pwwkew"
+> 
 > **Output:** 3
+> 
 > **Explanation:** The answer is "wke", with the length of 3.
 > Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
 > 
@@ -4154,13 +4388,18 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** s = "ABAB", k = 2
+> 
 > **Output:** 4
+> 
 > **Explanation:** Replace the two 'A's with two 'B's or vice versa.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** s = "AABABBA", k = 1
+> 
 > **Output:** 4
+> 
 > **Explanation:** Replace the one 'A' in the middle with 'B' and form "AABBBBA".
 > The substring "BBBB" has the longest repeating letters, which is 4.
 > There may exists other ways to achieve this answer too.
@@ -4214,19 +4453,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** s = "ADOBECODEBANC", t = "ABC"
+> 
 > **Output:** "BANC"
+> 
 > **Explanation:** The minimum window substring "BANC" includes 'A', 'B', and 'C' from string t.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** s = "a", t = "a"
+> 
 > **Output:** "a"
+> 
 > **Explanation:** The entire string s is the minimum window.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** s = "a", t = "aa"
+> 
 > **Output:** ""
+> 
 > **Explanation:** Both 'a's from t must be included in the window.
 > Since the largest window of s only has one 'a', return empty string.
 > 
@@ -4309,6 +4556,7 @@ filtered_s = [(O, 'A'), (1, 'B'), (2, 'C'), (11, 'A'), (14, 'B'), (15, 'C')]
 > 
 > **Output:** true
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** s = "rat", t = "car"
@@ -4360,7 +4608,7 @@ class Solution:
         return Counter(s) == Counter(t)  # Compare the two count dictionaries 
 ```
 
-54. [Group Anagrams](https://leetcode.com/problems/group-anagrams/)
+1.  [Group Anagrams](https://leetcode.com/problems/group-anagrams/)
 
 > Given an array of strings `strs`, group the anagrams together. You can return the answer in **any order**.
 > 
@@ -4376,11 +4624,13 @@ class Solution:
 > - The strings `"nat"` and `"tan"` are anagrams as they can be rearranged to form each other.
 > - The strings `"ate"`, `"eat"`, and `"tea"` are anagrams as they can be rearranged to form each other.
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** strs = [""]
 > 
 > **Output:** [[""]]
+> 
 > 
 > **Example 3:**
 > 
@@ -4479,7 +4729,7 @@ class Solution:
         return list(anagrams.values())
 ```
 
-55. [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)
+1.  [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)
 
 > Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
 > 
@@ -4495,17 +4745,20 @@ class Solution:
 > 
 > **Output:** true
 > 
+> 
 > **Example 2:**
 > 
 > **Input:** s = "()[]{}"
 > 
 > **Output:** true
 > 
+> 
 > **Example 3:**
 > 
 > **Input:** s = "(]"
 > 
 > **Output:** false
+> 
 > 
 > **Example 4:**
 > 
@@ -4545,7 +4798,7 @@ class Solution:
         return not stack  # Return True if stack is empty (all brackets matched)
 ```
 
-56. [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/)
+1.  [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/)
 
 > A phrase is a **palindrome** if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
 > 
@@ -4554,19 +4807,27 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** s = "A man, a plan, a canal: Panama"
+> 
 > **Output:** true
+> 
 > **Explanation:** "amanaplanacanalpanama" is a palindrome.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** s = "race a car"
+> 
 > **Output:** false
+> 
 > **Explanation:** "raceacar" is not a palindrome.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** s = " "
+> 
 > **Output:** true
+> 
 > **Explanation:** s is an empty string "" after removing non-alphanumeric characters.
 > Since an empty string reads the same forward and backward, it is a palindrome.
 > 
@@ -4615,12 +4876,16 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** s = "babad"
+> 
 > **Output:** "bab"
+> 
 > **Explanation:** "aba" is also a valid answer.
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** s = "cbbd"
+> 
 > **Output:** "bb"
 > 
 > **Constraints:**
@@ -4682,13 +4947,18 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** s = "abc"
+> 
 > **Output:** 3
+> 
 > **Explanation:** Three palindromic strings: "a", "b", "c".
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** s = "aaa"
+> 
 > **Output:** 6
+> 
 > **Explanation:** Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa".
 > 
 > **Constraints:**
@@ -4842,11 +5112,14 @@ class Codec:
 > ![](https://assets.leetcode.com/uploads/2020/11/26/tmp-tree.jpg)
 > 
 > **Input:** root = [3,9,20,null,null,15,7]
+> 
 > **Output:** 3
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** root = [1,null,2]
+> 
 > **Output:** 2
 > 
 > **Constraints:**
@@ -4909,20 +5182,25 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/12/20/ex1.jpg)
 > 
 > **Input:** p = [1,2,3], q = [1,2,3]
+> 
 > **Output:** true
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/12/20/ex2.jpg)
 > 
 > **Input:** p = [1,2], q = [1,null,2]
+> 
 > **Output:** false
+> 
 > 
 > **Example 3:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/12/20/ex3.jpg)
 > 
 > **Input:** p = [1,2,1], q = [1,1,2]
+> 
 > **Output:** false
 > 
 > **Constraints:**
@@ -4982,18 +5260,23 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2021/03/14/invert1-tree.jpg)
 > 
 > **Input:** root = [4,2,7,1,3,6,9]
+> 
 > **Output:** [4,7,2,9,6,3,1]
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2021/03/14/invert2-tree.jpg)
 > 
 > **Input:** root = [2,1,3]
+> 
 > **Output:** [2,3,1]
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** root = []
+> 
 > **Output:** []
 > 
 > **Constraints:**
@@ -5065,15 +5348,20 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/10/13/exx1.jpg)
 > 
 > **Input:** root = [1,2,3]
+> 
 > **Output:** 6
+> 
 > **Explanation:** The optimal path is 2 -> 1 -> 3 with a path sum of 2 + 1 + 3 = 6.
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/10/13/exx2.jpg)
 > 
 > **Input:** root = [-10,9,20,null,null,15,7]
+> 
 > **Output:** 42
+> 
 > **Explanation:** The optimal path is 15 -> 20 -> 7 with a path sum of 15 + 20 + 7 = 42.
 > 
 > **Constraints:**
@@ -5135,16 +5423,21 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2021/02/19/tree1.jpg)
 > 
 > **Input:** root = [3,9,20,null,null,15,7]
+> 
 > **Output:** [[3],[9,20],[15,7]]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** root = [1]
+> 
 > **Output:** [[1]]
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** root = []
+> 
 > **Output:** []
 > 
 > **Constraints:**
@@ -5201,11 +5494,14 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/09/15/serdeser.jpg)
 > 
 > **Input:** root = [1,2,3,null,null,4,5]
+> 
 > **Output:** [1,2,3,null,null,4,5]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** root = []
+> 
 > **Output:** []
 > 
 > **Constraints:**
@@ -5269,13 +5565,16 @@ class Codec:
 > ![](https://assets.leetcode.com/uploads/2021/04/28/subtree1-tree.jpg)
 > 
 > **Input:** root = [3,4,5,1,2], subRoot = [4,1,2]
+> 
 > **Output:** true
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2021/04/28/subtree2-tree.jpg)
 > 
 > **Input:** root = [3,4,5,1,2,null,null,null,null,0], subRoot = [4,1,2]
+> 
 > **Output:** false
 > 
 > **Constraints:**
@@ -5379,11 +5678,14 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2021/02/19/tree.jpg)
 > 
 > **Input:** preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+> 
 > **Output:** [3,9,20,null,null,15,7]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** preorder = [-1], inorder = [-1]
+> 
 > **Output:** [-1]
 > 
 > **Constraints:**
@@ -5450,14 +5752,18 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2020/12/01/tree1.jpg)
 > 
 > **Input:** root = [2,1,3]
+> 
 > **Output:** true
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/12/01/tree2.jpg)
 > 
 > **Input:** root = [5,1,4,null,null,3,6]
+> 
 > **Output:** false
+> 
 > **Explanation:** The root node's value is 5 but its right child's value is 4.
 > 
 > **Constraints:**
@@ -5528,13 +5834,16 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2021/01/28/kthtree1.jpg)
 > 
 > **Input:** root = [3,1,4,null,2], k = 1
+> 
 > **Output:** 1
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2021/01/28/kthtree2.jpg)
 > 
 > **Input:** root = [5,3,6,2,4,null,null,1], k = 3
+> 
 > **Output:** 3
 > 
 > **Constraints:**
@@ -5579,20 +5888,27 @@ class Solution:
 > ![](https://assets.leetcode.com/uploads/2018/12/14/binarysearchtree_improved.png)
 > 
 > **Input:** root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+> 
 > **Output:** 6
+> 
 > **Explanation:** The LCA of nodes 2 and 8 is 6.
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2018/12/14/binarysearchtree_improved.png)
 > 
 > **Input:** root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+> 
 > **Output:** 2
+> 
 > **Explanation:** The LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.
+> 
 > 
 > **Example 3:**
 > 
 > **Input:** root = [2,1], p = 2, q = 1
+> 
 > **Output:** 2
 > 
 > **Constraints:**
@@ -5834,13 +6150,16 @@ class WordDictionary:
 > ![](https://assets.leetcode.com/uploads/2020/11/07/search1.jpg)
 > 
 > **Input:** board = [["o","a","a","n"],["e","t","a","e"],["i","h","k","r"],["i","f","l","v"]], words = ["oath","pea","eat","rain"]
+> 
 > **Output:** ["eat","oath"]
+> 
 > 
 > **Example 2:**
 > 
 > ![](https://assets.leetcode.com/uploads/2020/11/07/search2.jpg)
 > 
 > **Input:** board = [["a","b"],["c","d"]], words = ["abcb"]
+> 
 > **Output:** []
 > 
 > **Constraints:**
@@ -5962,11 +6281,14 @@ class Solution:
 > **Example 1:**
 > 
 > **Input:** nums = [1,1,1,2,2,3], k = 2
+> 
 > **Output:** [1,2]
+> 
 > 
 > **Example 2:**
 > 
 > **Input:** nums = [1], k = 1
+> 
 > **Output:** [1]
 > 
 > **Constraints:**
