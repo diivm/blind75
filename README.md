@@ -1,5 +1,7 @@
 # blind75
 
+This document contains solutions to the [Blind 75](https://leetcode.com/discuss/general-discussion/460599/blind-75-leetcode-questions) problems.
+
 ## Arrays
 
 1. [Two Sum](https://leetcode.com/problems/two-sum/)
